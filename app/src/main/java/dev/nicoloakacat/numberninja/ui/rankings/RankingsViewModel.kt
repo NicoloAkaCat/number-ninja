@@ -1,10 +1,10 @@
-package dev.nicoloakacat.numberninja.ui.dashboard
+package dev.nicoloakacat.numberninja.ui.rankings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class DashboardViewModel : ViewModel() {
+class RankingsViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is dashboard Fragment"

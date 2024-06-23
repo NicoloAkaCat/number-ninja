@@ -1,4 +1,4 @@
-package dev.nicoloakacat.numberninja.ui.dashboard
+package dev.nicoloakacat.numberninja.ui.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,12 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import dev.nicoloakacat.numberninja.databinding.FragmentDashboardBinding
+import dev.nicoloakacat.numberninja.databinding.FragmentProfileBinding
 
-class DashboardFragment : Fragment() {
+class ProfileFragment : Fragment() {
 
-    private var _binding: FragmentDashboardBinding? = null
+    private var _binding: FragmentProfileBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -22,10 +21,10 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel: DashboardViewModel by viewModels()
+        val profileViewModel: ProfileViewModel by viewModels()
 
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        binding.viewModel = dashboardViewModel
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        binding.viewModel = profileViewModel
 
         return binding.root
     }

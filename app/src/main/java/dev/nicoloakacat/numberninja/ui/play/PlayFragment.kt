@@ -1,18 +1,17 @@
-package dev.nicoloakacat.numberninja.ui.notifications
+package dev.nicoloakacat.numberninja.ui.play
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import dev.nicoloakacat.numberninja.databinding.FragmentNotificationsBinding
+import dev.nicoloakacat.numberninja.databinding.FragmentPlayBinding
 
-class NotificationsFragment : Fragment() {
 
-    private var _binding: FragmentNotificationsBinding? = null
+class PlayFragment : Fragment() {
+
+    private var _binding: FragmentPlayBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -23,10 +22,10 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel: NotificationsViewModel by viewModels()
+        val playViewModel: PlayViewModel by viewModels()
 
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
-        binding.viewModel = notificationsViewModel
+        _binding = FragmentPlayBinding.inflate(inflater, container, false)
+        binding.viewModel = playViewModel
 
         return binding.root
     }

@@ -3,17 +3,17 @@
     <data>
         <variable
             name="viewModel"
-            type="dev.nicoloakacat.numberninja.ui.home.HomeViewModel" />
+            type="dev.nicoloakacat.numberninja.ui.play.PlayViewModel" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".ui.play.PlayFragment">
 
     <TextView
-        android:id="@+id/text_home"
+        android:id="@+id/text_play"
         android:text="@{viewModel.text}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
