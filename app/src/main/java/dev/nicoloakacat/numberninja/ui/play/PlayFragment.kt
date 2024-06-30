@@ -11,27 +11,37 @@ import dev.nicoloakacat.numberninja.databinding.FragmentPlayBinding
 
 class PlayFragment : Fragment() {
 
-    private var _binding: FragmentPlayBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentPlayBinding
+    private val viewModel: PlayViewModel by viewModels()
+    private var showNumber = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val playViewModel: PlayViewModel by viewModels()
-
-        _binding = FragmentPlayBinding.inflate(inflater, container, false)
-        binding.viewModel = playViewModel
-
+        binding = FragmentPlayBinding.inflate(inflater, container, false)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.setNumberToGuess(getRandomNumber(1))
+        binding.playBtn.setOnClickListener {
+            binding.introGroup.visibility = View.GONE
+            binding.gameGroup.visibility = View.VISIBLE
+            viewModel.startCountdown()
+        }
     }
+
+    private fun getRandomNumber(digits: Int): String {
+        var n = ""
+        repeat(digits){
+            n += (0..10).random().toString()
+        }
+        return n
+    }
+
 }

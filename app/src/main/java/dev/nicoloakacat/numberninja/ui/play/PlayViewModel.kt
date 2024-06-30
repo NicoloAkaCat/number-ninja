@@ -6,8 +6,32 @@ import androidx.lifecycle.ViewModel
 
 class PlayViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    val setNumberToGuess = {number: String ->  _numberToGuess.value = number }
+    val startCountdown = {
+        _progress.value = 5
+        Thread{
+            for(i in 4 downTo 0){
+                Thread.sleep(1000)
+                _progress.postValue(i)
+            }
+        }.start()
     }
-    val text: LiveData<String> = _text
+
+    private val _progress = MutableLiveData<Int>().apply {
+        value = 5
+    }
+
+    private val _maxScore = MutableLiveData<String>().apply {
+        value = "Max Score: 0" //TODO change to get maxScore from firebase, probably UserViewModel
+    }
+
+    // used String type due to the possibility of players guessing a number so big it doesn't fit into Int
+    private val _numberToGuess = MutableLiveData<String>().apply {
+        value= "0"
+    }
+
+
+    val maxScore: LiveData<String> = _maxScore
+    val number: LiveData<String> = _numberToGuess
+    val progress: LiveData<Int> = _progress
 }
