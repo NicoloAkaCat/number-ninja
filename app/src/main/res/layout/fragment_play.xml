@@ -68,7 +68,7 @@
             android:id="@+id/game_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:constraint_referenced_ids="play_number, play_countdown" />
 
         <TextView

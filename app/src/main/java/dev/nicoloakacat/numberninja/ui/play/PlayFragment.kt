@@ -22,7 +22,7 @@ class PlayFragment : Fragment() {
     ): View {
         binding = FragmentPlayBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -34,6 +34,11 @@ class PlayFragment : Fragment() {
             binding.gameGroup.visibility = View.VISIBLE
             viewModel.startCountdown()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.stopCountdown()
     }
 
     private fun getRandomNumber(digits: Int): String {

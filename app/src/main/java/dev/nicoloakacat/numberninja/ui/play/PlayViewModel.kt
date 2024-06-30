@@ -6,19 +6,28 @@ import androidx.lifecycle.ViewModel
 
 class PlayViewModel : ViewModel() {
 
+    private var countdown: Thread? = null
+
     val setNumberToGuess = {number: String ->  _numberToGuess.value = number }
     val startCountdown = {
         _progress.value = 5
-        Thread{
+        countdown = Thread{
             for(i in 4 downTo 0){
-                Thread.sleep(1000)
+                try {
+                    Thread.sleep(1000)
+                }catch (e: Exception){
+                    // interrupted by onDestroyView i.e. when changing page
+                    return@Thread
+                }
                 _progress.postValue(i)
             }
-        }.start()
+        }
+        countdown!!.start()
     }
+    val stopCountdown = { countdown?.interrupt() }
 
     private val _progress = MutableLiveData<Int>().apply {
-        value = 5
+        value = 100
     }
 
     private val _maxScore = MutableLiveData<String>().apply {
