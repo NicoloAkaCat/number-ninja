@@ -38,6 +38,7 @@ class PlayFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // if the user change page before the countdown has ended we need to stop it
         viewModel.stopCountdown()
     }
 
