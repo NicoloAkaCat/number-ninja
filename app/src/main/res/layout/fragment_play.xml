@@ -29,10 +29,12 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.050000012" />
 
+        <!-- INTRO GROUP -->
         <androidx.constraintlayout.widget.Group
             android:id="@+id/intro_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="visible"
             app:constraint_referenced_ids="play_text_title, play_btn" />
 
         <TextView
@@ -64,8 +66,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.59000003" />
 
+        <!-- SHOW NUMBER GROUP -->
         <androidx.constraintlayout.widget.Group
-            android:id="@+id/game_group"
+            android:id="@+id/show_number_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
@@ -100,6 +103,38 @@
             app:layout_constraintVertical_bias="0.12"
             app:trackCornerRadius="5dp"
             app:trackThickness="10dp" />
+
+        <!-- GUESS GROUP -->
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/guess_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="play_guess_number, play_guess_btn" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/play_guess_number"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/play_guess_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/play_guess"
+            app:cornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/play_guess_number"
+            app:layout_constraintVertical_bias="0.15000003" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

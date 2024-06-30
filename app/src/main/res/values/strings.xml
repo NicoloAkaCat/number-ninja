@@ -7,4 +7,5 @@
     <!-- PLay strings -->
     <string name="play_remember_the_number">Remember the number!</string>
     <string name="play_play">Play</string>
+    <string name="play_guess">Guess</string>
 </resources>
