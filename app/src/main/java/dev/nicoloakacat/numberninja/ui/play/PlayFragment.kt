@@ -6,10 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import dev.nicoloakacat.numberninja.R
 import dev.nicoloakacat.numberninja.databinding.FragmentPlayBinding
 
 
@@ -46,6 +45,7 @@ class PlayFragment : Fragment() {
             }
         }
         binding.playGuessBtn.setOnClickListener {
+            binding.playResultMessage.visibility = View.VISIBLE
             val guess = binding.playGuessNumber.text.toString()
             binding.playGuessNumber.text?.clear()
             // close keyboard
@@ -53,13 +53,27 @@ class PlayFragment : Fragment() {
             imm.hideSoftInputFromWindow(view.windowToken, 0)
             // check guess
             if(viewModel.number.value == guess){
-                //TODO show success message
+                binding.playResultMessage.text = resources.getString(R.string.play_guess_success)
+                binding.playResultMessage.setTextColor(resources.getColor(R.color.black, requireActivity().theme))
+                binding.playResultMessage.postDelayed({
+                    binding.playResultMessage.visibility = View.INVISIBLE
+                    //TODO animation
+                }, 3000)
                 viewModel.setMaxScore(currentDigit)
                 currentDigit += 1
                 viewModel.setNumberToGuess(getRandomNumber(currentDigit))
                 binding.guessGroup.visibility = View.GONE
                 binding.showNumberGroup.visibility = View.VISIBLE
                 viewModel.startCountdown()
+            }else{
+                binding.playResultMessage.text = resources.getString(R.string.play_guess_failure)
+                binding.playResultMessage.setTextColor(resources.getColor(R.color.purple_500, requireActivity().theme))
+                binding.playResultMessage.postDelayed({
+                    binding.playResultMessage.visibility = View.INVISIBLE
+                }, 3000)
+                currentDigit = 1
+                binding.guessGroup.visibility = View.GONE
+                binding.introGroup.visibility = View.VISIBLE
             }
         }
     }

@@ -20,10 +20,14 @@ class PlayViewModel : ViewModel() {
     private val _numberToGuess = MutableLiveData<String>().apply {
         value= "0"
     }
+    private val _resultMessage = MutableLiveData<String>().apply {
+        value= ""
+    }
 
     val maxScore: LiveData<String> = _maxScoreText
     val number: LiveData<String> = _numberToGuess
     val countdownProgress: LiveData<Int> = _countdownProgress
+    val resultMessage: LiveData<String> = _resultMessage
 
     val setNumberToGuess = {number: String ->  _numberToGuess.value = number }
     val startCountdown = {
