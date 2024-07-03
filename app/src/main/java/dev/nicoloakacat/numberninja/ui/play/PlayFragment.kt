@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
+import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dev.nicoloakacat.numberninja.R
@@ -31,21 +33,21 @@ class PlayFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        currentDigit = 1
-        viewModel.setNumberToGuess(getRandomNumber(currentDigit))
         binding.playBtn.setOnClickListener {
-            binding.introGroup.visibility = View.GONE
-            binding.showNumberGroup.visibility = View.VISIBLE
+            viewModel.setNumberToGuess(getRandomNumber(currentDigit))
+            hide(binding.introGroup)
+            show(binding.showNumberGroup)
             viewModel.startCountdown()
         }
         viewModel.countdownProgress.observe(viewLifecycleOwner) {
             if(it == 0) {
-                binding.showNumberGroup.visibility = View.GONE
-                binding.guessGroup.visibility = View.VISIBLE
+                hide(binding.showNumberGroup)
+                show(binding.guessNumberGroup)
             }
         }
         binding.playGuessBtn.setOnClickListener {
-            binding.playResultMessage.visibility = View.VISIBLE
+            val resultMsg: TextView = binding.playResultMessage
+            resultMsg.visibility = View.VISIBLE
             val guess = binding.playGuessNumber.text.toString()
             binding.playGuessNumber.text?.clear()
             // close keyboard
@@ -53,27 +55,28 @@ class PlayFragment : Fragment() {
             imm.hideSoftInputFromWindow(view.windowToken, 0)
             // check guess
             if(viewModel.number.value == guess){
-                binding.playResultMessage.text = resources.getString(R.string.play_guess_success)
-                binding.playResultMessage.setTextColor(resources.getColor(R.color.black, requireActivity().theme))
-                binding.playResultMessage.postDelayed({
-                    binding.playResultMessage.visibility = View.INVISIBLE
+                resultMsg.text = resources.getString(R.string.play_guess_success)
+                resultMsg.setTextColor(resources.getColor(R.color.black, requireActivity().theme))
+                resultMsg.postDelayed({
+                    resultMsg.visibility = View.INVISIBLE
                     //TODO animation
                 }, 3000)
                 viewModel.setMaxScore(currentDigit)
                 currentDigit += 1
                 viewModel.setNumberToGuess(getRandomNumber(currentDigit))
-                binding.guessGroup.visibility = View.GONE
-                binding.showNumberGroup.visibility = View.VISIBLE
+                hide(binding.guessNumberGroup)
+                show(binding.showNumberGroup)
                 viewModel.startCountdown()
             }else{
-                binding.playResultMessage.text = resources.getString(R.string.play_guess_failure)
-                binding.playResultMessage.setTextColor(resources.getColor(R.color.purple_500, requireActivity().theme))
-                binding.playResultMessage.postDelayed({
-                    binding.playResultMessage.visibility = View.INVISIBLE
+                resultMsg.text = resources.getString(R.string.play_guess_failure)
+                resultMsg.setTextColor(resources.getColor(R.color.purple_500, requireActivity().theme))
+                resultMsg.postDelayed({
+                    resultMsg.visibility = View.INVISIBLE
+                    //TODO animation
                 }, 3000)
                 currentDigit = 1
-                binding.guessGroup.visibility = View.GONE
-                binding.introGroup.visibility = View.VISIBLE
+                hide(binding.guessNumberGroup)
+                show(binding.introGroup)
             }
         }
     }
@@ -94,5 +97,8 @@ class PlayFragment : Fragment() {
         }
         return n
     }
+
+    private val show = { v: Group -> v.visibility = View.VISIBLE }
+    private val hide = { v: Group -> v.visibility = View.GONE }
 
 }

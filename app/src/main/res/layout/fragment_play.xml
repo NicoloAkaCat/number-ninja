@@ -116,9 +116,9 @@
             app:trackCornerRadius="5dp"
             app:trackThickness="10dp" />
 
-        <!-- GUESS GROUP -->
+        <!-- GUESS NUMBER GROUP -->
         <androidx.constraintlayout.widget.Group
-            android:id="@+id/guess_group"
+            android:id="@+id/guess_number_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
