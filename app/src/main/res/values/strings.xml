@@ -10,4 +10,6 @@
     <string name="play_guess">Guess</string>
     <string name="play_guess_success">Good job! :)</string>
     <string name="play_guess_failure">That was not the right number :(</string>
+
+    <string name="logout_btn">Log Out</string>
 </resources>
