@@ -3,4 +3,6 @@
     <string name="title_play">Play</string>
     <string name="title_rankings">Rankings</string>
     <string name="title_profile">Profile</string>
+
+    <string name="logout_btn">Log Out</string>
 </resources>
