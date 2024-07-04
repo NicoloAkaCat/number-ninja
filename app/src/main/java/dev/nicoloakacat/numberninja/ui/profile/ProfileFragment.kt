@@ -17,12 +17,8 @@ import dev.nicoloakacat.numberninja.R
 
 class ProfileFragment : Fragment() {
 
-    private var _binding: FragmentProfileBinding? = null
+    private lateinit var binding: FragmentProfileBinding
     private val profileViewModel: ProfileViewModel by viewModels()
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
 
     private val signInLauncher = registerForActivityResult(
         FirebaseAuthUIActivityResultContract(),
@@ -65,8 +61,6 @@ class ProfileFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //this.activity?.setVisible(false)
         if(profileViewModel.user.value == null) {
 
             val user = FirebaseAuth.getInstance().currentUser
@@ -88,13 +82,12 @@ class ProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
         binding.viewModel = profileViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
 
         profileViewModel.user.observe(viewLifecycleOwner) { user ->
             if (user != null) {
-                this.activity?.setVisible(true)
-
                 val userName = user.displayName
                 profileViewModel.setText("Welcome $userName")
             }
@@ -103,10 +96,5 @@ class ProfileFragment : Fragment() {
         binding.logoutBtn.setOnClickListener { this.logOut() }
 
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

@@ -33,6 +33,7 @@ class PlayFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        currentDigit = 1
         binding.playBtn.setOnClickListener {
             viewModel.setNumberToGuess(getRandomNumber(currentDigit))
             hide(binding.introGroup)
