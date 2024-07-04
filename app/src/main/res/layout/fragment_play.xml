@@ -6,6 +6,9 @@
         <variable
             name="viewModel"
             type="dev.nicoloakacat.numberninja.ui.play.PlayViewModel" />
+        <variable
+            name="userViewModel"
+            type="dev.nicoloakacat.numberninja.UserViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,7 +23,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="@{viewModel.maxScore}"
+            android:text="@{userViewModel.maxScoreText}"
             android:textAlignment="center"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"

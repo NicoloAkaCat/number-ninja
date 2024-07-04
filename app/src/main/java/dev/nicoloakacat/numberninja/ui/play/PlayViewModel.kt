@@ -10,12 +10,6 @@ class PlayViewModel : ViewModel() {
     private val _countdownProgress = MutableLiveData<Int>().apply {
         value = 5
     }
-    private val _maxScore = MutableLiveData<Int>().apply {
-        value = 0 //TODO change to get maxScore from firebase, probably UserViewModel
-    }
-    private val _maxScoreText = MutableLiveData<String>().apply {
-        value = "Max Score: ${_maxScore.value}"
-    }
     // used String type due to the possibility of players guessing a number so big it doesn't fit into Int
     private val _numberToGuess = MutableLiveData<String>().apply {
         value= "0"
@@ -23,8 +17,7 @@ class PlayViewModel : ViewModel() {
     private val _resultMessage = MutableLiveData<String>().apply {
         value= ""
     }
-
-    val maxScore: LiveData<String> = _maxScoreText
+    
     val number: LiveData<String> = _numberToGuess
     val countdownProgress: LiveData<Int> = _countdownProgress
     val resultMessage: LiveData<String> = _resultMessage
@@ -46,9 +39,5 @@ class PlayViewModel : ViewModel() {
         countdown!!.start()
     }
     val stopCountdown = { countdown?.interrupt(); _countdownProgress.value = 5 }
-    val setMaxScore = {digit: Int -> if(digit > _maxScore.value!!){
-        _maxScore.value = digit
-        _maxScoreText.value = "Max Score: ${_maxScore.value}"
-    }}
 
 }

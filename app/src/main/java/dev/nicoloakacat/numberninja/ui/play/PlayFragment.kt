@@ -9,8 +9,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import dev.nicoloakacat.numberninja.R
+import dev.nicoloakacat.numberninja.UserViewModel
 import dev.nicoloakacat.numberninja.databinding.FragmentPlayBinding
 
 
@@ -18,6 +20,7 @@ class PlayFragment : Fragment() {
 
     private lateinit var binding: FragmentPlayBinding
     private val viewModel: PlayViewModel by viewModels()
+    private val userViewModel: UserViewModel by activityViewModels()
     private var currentDigit: Int = 1
 
     override fun onCreateView(
@@ -27,6 +30,7 @@ class PlayFragment : Fragment() {
     ): View {
         binding = FragmentPlayBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+        binding.userViewModel = userViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -62,7 +66,7 @@ class PlayFragment : Fragment() {
                     resultMsg.visibility = View.INVISIBLE
                     //TODO animation
                 }, 3000)
-                viewModel.setMaxScore(currentDigit)
+                userViewModel.setMaxScore(currentDigit)
                 currentDigit += 1
                 viewModel.setNumberToGuess(getRandomNumber(currentDigit))
                 hide(binding.guessNumberGroup)
