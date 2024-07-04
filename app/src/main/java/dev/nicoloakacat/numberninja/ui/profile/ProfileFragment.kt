@@ -66,7 +66,7 @@ class ProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        this.activity?.setVisible(false)
+        //this.activity?.setVisible(false)
         if(profileViewModel.user.value == null) {
 
             val user = FirebaseAuth.getInstance().currentUser
