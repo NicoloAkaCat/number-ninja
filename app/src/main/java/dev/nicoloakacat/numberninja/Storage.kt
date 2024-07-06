@@ -17,13 +17,13 @@ object UserStorage {
 
     private const val COLLECTION_NAME: String = "users"
 
-    fun createDocument(userDB: UserDB, uid: String) {
+    fun createDocument(userData: UserData, uid: String) {
         runBlocking {
             try {
                 firestore()
                     .collection(COLLECTION_NAME)
                     .document(uid)
-                    .set(userDB)
+                    .set(userData)
             }
             catch (e: Exception) {
                 Log.e("CREATE_DOCUMENT", e.message ?: "An Error Occurred")
@@ -47,15 +47,14 @@ object UserStorage {
         }.start()
     }
 
-    fun findOne(uid: String): UserDB? {
+    fun findOne(uid: String): UserData? {
         return runBlocking {
             try {
                 val doc = firestore()
                     .collection(COLLECTION_NAME)
                     .document(uid)
 
-                val user = doc.get().await().toObject<UserDB>()
-                return@runBlocking user
+                return@runBlocking doc.get().await().toObject<UserData>()
             }
             catch (e: Exception) {
                 Log.e("FIND_ONE", e.message ?: "An Error Occurred")
