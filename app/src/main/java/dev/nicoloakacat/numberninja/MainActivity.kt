@@ -23,19 +23,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
-        val db = Firebase.firestore
 
         val user = FirebaseAuth.getInstance().currentUser
         if(user != null){
             userViewModel.setUser(user)
-            db.collection("users").document(userViewModel.uid.value!!).get()
-            .addOnSuccessListener { doc ->
-                if(doc.exists())
-                    userViewModel.setDataFromDB(doc.toObject<UserDB>()!!)
-            }
-            .addOnFailureListener {
-                //TODO gestione errori
-            }
+
+            val uid: String = userViewModel.uid.value!!
+            val userDb = UserStorage.findOne(uid)
+
+            if(userDb != null) userViewModel.setDataFromDB(userDb)
         }
 
 
