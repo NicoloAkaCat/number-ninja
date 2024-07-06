@@ -2,7 +2,6 @@ package dev.nicoloakacat.numberninja.ui.profile
 
 import android.app.Activity.RESULT_OK
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +13,10 @@ import androidx.navigation.fragment.findNavController
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.toObject
 import dev.nicoloakacat.numberninja.R
 import dev.nicoloakacat.numberninja.UserDB
+import dev.nicoloakacat.numberninja.UserStorage
 import dev.nicoloakacat.numberninja.UserViewModel
 
 class ProfileFragment : Fragment() {
@@ -44,28 +41,27 @@ class ProfileFragment : Fragment() {
         if (result.resultCode == RESULT_OK) {
             val user = FirebaseAuth.getInstance().currentUser
             userViewModel.setUser(user)
-            val db = Firebase.firestore
-            db.collection("users").document(userViewModel.uid.value!!).get()
-                .addOnSuccessListener {doc ->
-                    if(doc.exists()) {
-                        val userDb = doc.toObject<UserDB>()!!
-                        if(userViewModel.maxScore.value!! > userDb.maxScore!!){
-                            userDb.maxScore = userViewModel.maxScore.value
-                            userViewModel.updateMaxScoreDB(userViewModel.maxScore.value!!)
-                        }
-                        userViewModel.setDataFromDB(userDb)
-                    }
-                    else
-                        db.collection("users").document(userViewModel.uid.value!!)
-                            .set(UserDB(
-                                maxScore = userViewModel.maxScore.value!!,
-                                nationality = 0,
-                                name = userViewModel.displayName.value!!
-                            ))
+
+            val uid: String = userViewModel.uid.value!!
+            val userDb = UserStorage.findOne(uid)
+
+            if (userDb != null) {
+                if(userViewModel.maxScore.value!! > userDb.maxScore!!) {
+                    userDb.maxScore = userViewModel.maxScore.value
+                    UserStorage.updateScore(userViewModel.maxScore.value!!, uid)
                 }
-                .addOnFailureListener {
-                    //TODO gestione errori
-                }
+
+                userViewModel.setDataFromDB(userDb)
+            }
+            else {
+                val userToInsert = UserDB(
+                    maxScore = userViewModel.maxScore.value!!,
+                    nationality = 0,
+                    name = userViewModel.displayName.value!!
+                )
+
+                UserStorage.createDocument(userToInsert, uid)
+            }
 
             navController.run {
                 popBackStack()
