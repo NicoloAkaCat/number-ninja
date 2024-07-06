@@ -2,6 +2,7 @@ package dev.nicoloakacat.numberninja.ui.play
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import dev.nicoloakacat.numberninja.R
+import dev.nicoloakacat.numberninja.UserStorage
 import dev.nicoloakacat.numberninja.UserViewModel
 import dev.nicoloakacat.numberninja.databinding.FragmentPlayBinding
 
@@ -22,6 +24,8 @@ class PlayFragment : Fragment() {
     private val viewModel: PlayViewModel by viewModels()
     private val userViewModel: UserViewModel by activityViewModels()
     private var currentDigit: Int = 1
+
+    private var playerHasNewMaxScore: Boolean = false;
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,6 +40,9 @@ class PlayFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        this.playerHasNewMaxScore = false
+
         super.onViewCreated(view, savedInstanceState)
         currentDigit = 1
         binding.playBtn.setOnClickListener {
@@ -66,13 +73,21 @@ class PlayFragment : Fragment() {
                     resultMsg.visibility = View.INVISIBLE
                     //TODO animation
                 }, 3000)
-                userViewModel.setMaxScore(currentDigit)
+
+                if(currentDigit > userViewModel.maxScore.value!!) {
+                    userViewModel.setMaxScore(currentDigit)
+                    this.playerHasNewMaxScore = true
+                }
+
                 currentDigit += 1
                 viewModel.setNumberToGuess(getRandomNumber(currentDigit))
                 hide(binding.guessNumberGroup)
                 show(binding.showNumberGroup)
                 viewModel.startCountdown()
             }else{
+                if(userViewModel.isUserLogged.value!! && this.playerHasNewMaxScore) {
+                    UserStorage.updateScore(userViewModel.maxScore.value!!, userViewModel.uid.value!!)
+                }
                 resultMsg.text = resources.getString(R.string.play_guess_failure)
                 resultMsg.setTextColor(resources.getColor(R.color.purple_500, requireActivity().theme))
                 resultMsg.postDelayed({
@@ -90,6 +105,10 @@ class PlayFragment : Fragment() {
         super.onDestroyView()
         // if the user change page before the countdown has ended we need to stop it
         viewModel.stopCountdown()
+
+        if(userViewModel.isUserLogged.value!! && this.playerHasNewMaxScore) {
+            UserStorage.updateScore(userViewModel.maxScore.value!!, userViewModel.uid.value!!)
+        }
     }
 
     private fun getRandomNumber(digits: Int): String {
