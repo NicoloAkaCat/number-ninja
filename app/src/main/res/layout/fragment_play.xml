@@ -32,17 +32,32 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.050000012" />
 
-        <TextView
-            android:id="@+id/play_result_message"
+        <com.google.android.material.chip.Chip
+            android:id="@+id/play_result_message_success"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{viewModel.resultMessage}"
-            android:textSize="20sp"
+            android:text="@string/play_guess_success"
+            style="@style/chipSuccessStyle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.17000002" />
+            app:layout_constraintVertical_bias="0.24000002"
+            android:visibility="gone"
+            />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/play_result_message_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/play_guess_failure"
+            style="@style/chipErrorStyle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.24000002"
+            android:visibility="gone"/>
 
         <!-- INTRO GROUP -->
         <androidx.constraintlayout.widget.Group
@@ -61,20 +76,20 @@
             android:layout_marginEnd="8dp"
             android:text="@string/play_remember_the_number"
             android:textAlignment="center"
-            android:textSize="20sp"
+            style="@style/TextAppearance.MaterialComponents.Headline5"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.32999998" />
+            app:layout_constraintVertical_bias="0.42999998" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/play_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/play_play"
-            app:cornerRadius="10dp"
+            style="@style/buttonStyle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -109,7 +124,7 @@
             android:id="@+id/play_countdown"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:max="5"
+            android:max="@{viewModel.maxTime}"
             android:progress="@{viewModel.countdownProgress}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -134,6 +149,8 @@
             android:inputType="number"
             android:textAlignment="center"
             android:textSize="25sp"
+            android:backgroundTint="?attr/colorPrimary"
+            android:textCursorDrawable="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -144,7 +161,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/play_guess"
-            app:cornerRadius="10dp"
+            style="@style/buttonStyle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

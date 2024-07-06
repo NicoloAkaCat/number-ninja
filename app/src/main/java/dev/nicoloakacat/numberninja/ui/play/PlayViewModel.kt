@@ -6,27 +6,20 @@ import androidx.lifecycle.ViewModel
 
 class PlayViewModel : ViewModel() {
 
+    val maxTime = 5
     private var countdown: Thread? = null
-    private val _countdownProgress = MutableLiveData<Int>().apply {
-        value = 5
-    }
+    private val _countdownProgress = MutableLiveData<Int>(maxTime)
     // used String type due to the possibility of players guessing a number so big it doesn't fit into Int
-    private val _numberToGuess = MutableLiveData<String>().apply {
-        value= "0"
-    }
-    private val _resultMessage = MutableLiveData<String>().apply {
-        value= ""
-    }
+    private val _numberToGuess = MutableLiveData<String>("0")
     
     val number: LiveData<String> = _numberToGuess
     val countdownProgress: LiveData<Int> = _countdownProgress
-    val resultMessage: LiveData<String> = _resultMessage
 
     val setNumberToGuess = {number: String ->  _numberToGuess.value = number }
     val startCountdown = {
-        _countdownProgress.value = 5
+        _countdownProgress.value = maxTime
         countdown = Thread{
-            for(i in 4 downTo 0){
+            for(i in maxTime-1 downTo 0){
                 try {
                     Thread.sleep(1000)
                 }catch (e: Exception){
@@ -38,6 +31,6 @@ class PlayViewModel : ViewModel() {
         }
         countdown!!.start()
     }
-    val stopCountdown = { countdown?.interrupt(); _countdownProgress.value = 5 }
+    val stopCountdown = { countdown?.interrupt(); _countdownProgress.value = maxTime }
 
 }

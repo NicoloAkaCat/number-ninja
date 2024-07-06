@@ -115,6 +115,7 @@ class ProfileFragment : Fragment() {
             val signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
+                .setTheme(R.style.Theme_NumberNinja)
                 .setIsSmartLockEnabled(false) //TODO togliere? non va
                 .build()
             signInLauncher.launch(signInIntent)

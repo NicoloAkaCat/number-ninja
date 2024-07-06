@@ -24,11 +24,11 @@
     <color name="secondary_900">#008061</color>
 
     <color name="success">#2e7d32</color>
-    <color name="success_light">#4caf50</color>
+    <color name="success_light">#aa4caf50</color>
     <color name="success_dark">#1b5e20</color>
 
     <color name="error">#d32f2f</color>
-    <color name="error_light">#ef5350</color>
+    <color name="error_light">#aaef5350</color>
     <color name="error_dark">#c62828</color>
 
     <color name="black">#FF000000</color>

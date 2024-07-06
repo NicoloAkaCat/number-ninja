@@ -9,8 +9,8 @@
     <string name="play_play">Play</string>
     <string name="play_guess">Guess</string>
     <string name="play_max_score">Max Score: %d</string>
-    <string name="play_guess_success">Good job! :)</string>
-    <string name="play_guess_failure">That was not the right number :(</string>
+    <string name="play_guess_success">Correct!</string>
+    <string name="play_guess_failure">Wrong :(</string>
 
     <!-- Profile strings -->
     <string name="profile_logout_btn">Logout</string>
