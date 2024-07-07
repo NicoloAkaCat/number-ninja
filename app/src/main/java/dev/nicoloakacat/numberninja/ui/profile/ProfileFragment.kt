@@ -1,7 +1,9 @@
 package dev.nicoloakacat.numberninja.ui.profile
 
 import android.app.Activity.RESULT_OK
+import android.content.res.Resources.NotFoundException
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -145,10 +147,15 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setFlagIcon(nationality: String) {
-        binding.profileCardNationalityBox.startIconDrawable = ResourcesCompat.getDrawable(
-            resources,
-            resources.getIdentifier(getFlagUri(nationality), null, null),
-            null
-        )
+        try{
+            binding.profileCardNationalityBox.startIconDrawable = ResourcesCompat.getDrawable(
+                resources,
+                resources.getIdentifier(getFlagUri(nationality), null, null),
+                null
+            )
+        }catch(e: NotFoundException){
+            Log.w("FLAG_DRAWABLE", "Flag drawable not found")
+            binding.profileCardNationalityBox.setStartIconDrawable(R.drawable.flag_unknown)
+        }
     }
 }
