@@ -1,12 +1,16 @@
 package dev.nicoloakacat.numberninja
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import com.firebase.ui.auth.data.model.User
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import java.time.ZoneOffset
 
 
 fun firestore(): FirebaseFirestore {
@@ -59,6 +63,39 @@ object UserStorage {
             }
             catch (e: Exception) {
                 Log.e("FIND_ONE", e.message ?: "An Error Occurred")
+                throw e
+            }
+        }
+    }
+
+    fun findAll(
+        orderBy: String = "maxScore",
+        direction: Query.Direction = Query.Direction.DESCENDING,
+        limit: Long = 0,
+        offset: Int = 0
+    ): MutableList<UserDB> {
+        return runBlocking {
+
+            val users = mutableListOf<UserDB>()
+
+            try {
+                var doc = firestore()
+                    .collection(COLLECTION_NAME)
+                    .orderBy(orderBy, direction)
+
+                if(limit > 0) doc = doc.limit(limit)
+                if(offset > 0) doc = doc.startAfter(offset)
+
+                val fetchedUsers = doc.get().await()
+
+                for(user in fetchedUsers) {
+                    users.add(user.toObject<UserDB>())
+                }
+
+                return@runBlocking users
+            }
+            catch (e: Exception) {
+                Log.e("FIND_ALL", e.message ?: "An Error Occurred")
                 throw e
             }
         }
