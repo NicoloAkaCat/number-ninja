@@ -8,11 +8,13 @@
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipBackgroundColor">@color/success_light</item>
         <item name="chipStrokeColor">@color/success_dark</item>
+        <item name="android:clickable">false</item>
     </style>
     <style name="chipErrorStyle">
         <item name="android:elevation">5dp</item>
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipBackgroundColor">@color/error_light</item>
         <item name="chipStrokeColor">@color/error_dark</item>
+        <item name="android:clickable">false</item>
     </style>
 </resources>
