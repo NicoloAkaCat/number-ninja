@@ -2,16 +2,16 @@ package dev.nicoloakacat.numberninja.ui.play
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.google.android.material.chip.Chip
 import dev.nicoloakacat.numberninja.R
 import dev.nicoloakacat.numberninja.UserStorage
 import dev.nicoloakacat.numberninja.UserViewModel
@@ -58,8 +58,6 @@ class PlayFragment : Fragment() {
             }
         }
         binding.playGuessBtn.setOnClickListener {
-            val resultMsg: TextView = binding.playResultMessage
-            resultMsg.visibility = View.VISIBLE
             val guess = binding.playGuessNumber.text.toString()
             binding.playGuessNumber.text?.clear()
             // close keyboard
@@ -67,33 +65,21 @@ class PlayFragment : Fragment() {
             imm.hideSoftInputFromWindow(view.windowToken, 0)
             // check guess
             if(viewModel.number.value == guess){
-                resultMsg.text = resources.getString(R.string.play_guess_success)
-                resultMsg.setTextColor(resources.getColor(R.color.black, requireActivity().theme))
-                resultMsg.postDelayed({
-                    resultMsg.visibility = View.INVISIBLE
-                    //TODO animation
-                }, 3000)
-
+                showResultMessage(binding.playResultMessageSuccess)
                 if(currentDigit > userViewModel.maxScore.value!!) {
                     userViewModel.setMaxScore(currentDigit)
                     this.playerHasNewMaxScore = true
                 }
-
                 currentDigit += 1
                 viewModel.setNumberToGuess(getRandomNumber(currentDigit))
                 hide(binding.guessNumberGroup)
                 show(binding.showNumberGroup)
                 viewModel.startCountdown()
             }else{
+                showResultMessage(binding.playResultMessageError)
                 if(userViewModel.isUserLogged.value!! && this.playerHasNewMaxScore) {
                     UserStorage.updateScore(userViewModel.maxScore.value!!, userViewModel.uid.value!!)
                 }
-                resultMsg.text = resources.getString(R.string.play_guess_failure)
-                resultMsg.setTextColor(resources.getColor(R.color.purple_500, requireActivity().theme))
-                resultMsg.postDelayed({
-                    resultMsg.visibility = View.INVISIBLE
-                    //TODO animation
-                }, 3000)
                 currentDigit = 1
                 hide(binding.guessNumberGroup)
                 show(binding.introGroup)
@@ -124,5 +110,14 @@ class PlayFragment : Fragment() {
 
     private val show = { v: Group -> v.visibility = View.VISIBLE }
     private val hide = { v: Group -> v.visibility = View.GONE }
+
+    private fun showResultMessage(resMsg: Chip) {
+        resMsg.visibility = View.VISIBLE
+        resMsg.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
+        resMsg.postDelayed({
+            resMsg.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_out))
+            resMsg.visibility = View.INVISIBLE
+        },3000)
+    }
 
 }
