@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import dev.nicoloakacat.numberninja.Nationality
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
@@ -48,6 +49,20 @@ object UserStorage {
         }.start()
     }
 
+    fun updateData(newName: String, newNationality: String, uid: String) {
+        runBlocking {
+            try{
+                firestore()
+                    .collection(COLLECTION_NAME)
+                    .document(uid)
+                    .update("name", newName, "nationality", newNationality.replace(" ", "_"))
+            }catch (e: Exception){
+                Log.e("UPDATE_DATA", e.message ?: "An Error Occurred")
+                throw e
+            }
+        }
+    }
+
     fun findOne(uid: String): UserData? {
         return runBlocking {
             try {
@@ -83,9 +98,8 @@ object UserStorage {
                 if(offset > 0) doc = doc.startAfter(offset)
 
                 val fetchedUsers = doc.get().await()
-//
                 for(user in fetchedUsers) {
-//                    Log.d("USER", user.toString())
+                    //Log.d("USER", user.toString())
                     users.add(user.toObject<UserData>())
                 }
 

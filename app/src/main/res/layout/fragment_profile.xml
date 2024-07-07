@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="profile_card_data, profile_update_button, profile_logout_button" />
+        app:constraint_referenced_ids="profile_card_data, profile_update_button, profile_logout_button, profile_update_progress" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/profile_card_data"
@@ -129,9 +129,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="none"
-                    android:text="@{viewModel.nationality}"/>
+                    android:text="@{viewModel.nationality.replace('_', ' ')}"/>
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/profile_update_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:indicatorColor="?attr/colorSecondaryVariant"
+                android:indeterminate="true"
+                app:trackColor="?attr/colorSecondary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_card_nationality_box"
+                app:layout_constraintVertical_bias="0.6"
+                android:visibility="invisible"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

@@ -33,4 +33,10 @@ class UserViewModel: ViewModel() {
     val setMaxScore = { digit: Int ->
         _maxScore.value = digit
     }
+    val setDisplayName = { newName: String ->
+        _displayName.value = newName
+    }
+    val setNationality = { newNationality: String ->
+        _nationality.value = newNationality.replace(" ", "_")
+    }
 }

@@ -17,6 +17,7 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import dev.nicoloakacat.numberninja.Nationality
 import dev.nicoloakacat.numberninja.R
 import dev.nicoloakacat.numberninja.db.UserData
@@ -85,6 +86,11 @@ class ProfileFragment : Fragment() {
         binding.profileLogoutButton.setOnClickListener {
             logOut()
         }
+
+        //update
+        binding.profileUpdateButton.setOnClickListener {
+            updateProfile()
+        }
     }
 
     private val signInLauncher = registerForActivityResult(
@@ -143,6 +149,31 @@ class ProfileFragment : Fragment() {
                 .addOnFailureListener{
                     //TODO errori
                 }
+        }
+    }
+
+    private fun updateProfile() {
+        val newName = binding.profileCardName.text.toString()
+        val newNationality = binding.profileCardNationality.text.toString()
+        binding.profileUpdateProgress.visibility = View.VISIBLE
+
+        //update viewModel
+        userViewModel.setDisplayName(newName)
+        userViewModel.setNationality(newNationality)
+
+        try {
+            // update firebase Auth user
+            FirebaseAuth.getInstance().currentUser?.updateProfile(
+                UserProfileChangeRequest.Builder()
+                    .setDisplayName(newName)
+                    .build()
+            )
+            // update DB data
+            UserStorage.updateData(newName, newNationality, userViewModel.uid.value!!)
+        }catch (e: Exception){
+            //TODO errori
+        }finally {
+            binding.profileUpdateProgress.visibility = View.INVISIBLE
         }
     }
 
