@@ -1,18 +1,15 @@
 package dev.nicoloakacat.numberninja
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.toObject
 import dev.nicoloakacat.numberninja.databinding.ActivityMainBinding
+import dev.nicoloakacat.numberninja.db.UserStorage
 
 class MainActivity : AppCompatActivity() {
 

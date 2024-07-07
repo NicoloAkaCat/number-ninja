@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
+import dev.nicoloakacat.numberninja.db.UserData
 
 class UserViewModel: ViewModel() {
     private val _user = MutableLiveData<FirebaseUser?>(null)

@@ -12,7 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.google.android.material.chip.Chip
 import dev.nicoloakacat.numberninja.R
-import dev.nicoloakacat.numberninja.UserStorage
+import dev.nicoloakacat.numberninja.db.UserStorage
 import dev.nicoloakacat.numberninja.UserViewModel
 import dev.nicoloakacat.numberninja.databinding.FragmentPlayBinding
 import dev.nicoloakacat.numberninja.hide

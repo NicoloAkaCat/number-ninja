@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -18,8 +17,8 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
 import dev.nicoloakacat.numberninja.Nationality
 import dev.nicoloakacat.numberninja.R
-import dev.nicoloakacat.numberninja.UserData
-import dev.nicoloakacat.numberninja.UserStorage
+import dev.nicoloakacat.numberninja.db.UserData
+import dev.nicoloakacat.numberninja.db.UserStorage
 import dev.nicoloakacat.numberninja.UserViewModel
 import dev.nicoloakacat.numberninja.getFlagUri
 import dev.nicoloakacat.numberninja.hide

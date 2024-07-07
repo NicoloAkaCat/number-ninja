@@ -11,8 +11,8 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.nicoloakacat.numberninja.R
-import dev.nicoloakacat.numberninja.UserData
-import dev.nicoloakacat.numberninja.UserStorage
+import dev.nicoloakacat.numberninja.db.UserData
+import dev.nicoloakacat.numberninja.db.UserStorage
 import dev.nicoloakacat.numberninja.databinding.FragmentRankingsBinding
 
 class RankingAdapter(private val dataSet: MutableList<UserData>) : RecyclerView.Adapter<RankingAdapter.RankingViewHolder>() {

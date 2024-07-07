@@ -1,4 +1,4 @@
-package dev.nicoloakacat.numberninja
+package dev.nicoloakacat.numberninja.db
 
 data class UserData(
     var maxScore: Int? = null,
