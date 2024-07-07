@@ -13,5 +13,7 @@
     <string name="play_guess_failure">Wrong :(</string>
 
     <!-- Profile strings -->
+    <string name="profile_login_text">Login to save your progress!</string>
+    <string name="profile_login_btn">Login</string>
     <string name="profile_logout_btn">Logout</string>
 </resources>

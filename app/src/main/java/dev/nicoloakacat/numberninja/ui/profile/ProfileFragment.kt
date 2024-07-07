@@ -22,68 +22,7 @@ import dev.nicoloakacat.numberninja.UserViewModel
 class ProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
-    private val profileViewModel: ProfileViewModel by viewModels()
     private val userViewModel: UserViewModel by activityViewModels()
-
-    private val signInLauncher = registerForActivityResult(
-        FirebaseAuthUIActivityResultContract(),
-    ) { res ->
-        this.onSignInResult(res)
-    }
-
-    private val providers = arrayListOf(
-        AuthUI.IdpConfig.EmailBuilder().build(),
-        AuthUI.IdpConfig.GoogleBuilder().build()
-    )
-
-    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
-        val navController = findNavController()
-        when(result.resultCode){
-            RESULT_OK -> {
-                val user = FirebaseAuth.getInstance().currentUser
-                userViewModel.setUser(user)
-
-                val uid: String = userViewModel.uid.value!!
-                //TODO try catch errori
-                val userDataFromDB = UserStorage.findOne(uid)
-
-                // sync data with the DB
-                if (userDataFromDB != null) {
-                    if(userViewModel.maxScore.value!! > userDataFromDB.maxScore!!) {
-                        userDataFromDB.maxScore = userViewModel.maxScore.value
-                        UserStorage.updateScore(userViewModel.maxScore.value!!, uid)
-                    }
-                    userViewModel.setDataFromDB(userDataFromDB)
-                }
-                else {
-                    val userToInsert = UserData(
-                        maxScore = userViewModel.maxScore.value!!,
-                        nationality = 0,
-                        name = userViewModel.displayName.value!!
-                    )
-                    UserStorage.createDocument(userToInsert, uid)
-                }
-
-                navController.run {
-                    popBackStack()
-                    navigate(R.id.navigation_profile)
-                }
-            }
-            else -> navController.popBackStack(R.id.navigation_play, false)
-
-        }
-    }
-
-    private fun logOut() {
-        context?.let {
-            AuthUI.getInstance()
-                .signOut(it)
-                .addOnCompleteListener {
-                    userViewModel.setUser(null)
-                    findNavController().popBackStack(R.id.navigation_profile, false)
-                }
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -108,7 +47,7 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.loginBtn.setOnClickListener {
+        binding.profileLoginButton.setOnClickListener {
             val signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
@@ -119,6 +58,70 @@ class ProfileFragment : Fragment() {
         }
         binding.logoutBtn.setOnClickListener {
             logOut()
+        }
+    }
+
+    private val providers = arrayListOf(
+        AuthUI.IdpConfig.EmailBuilder().build(),
+        AuthUI.IdpConfig.GoogleBuilder().build()
+    )
+
+    private val signInLauncher = registerForActivityResult(
+        FirebaseAuthUIActivityResultContract(),
+    ) { res ->
+        this.onSignInResult(res)
+    }
+
+    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+        val navController = findNavController()
+        when(result.resultCode){
+            RESULT_OK -> {
+                val user = FirebaseAuth.getInstance().currentUser
+                userViewModel.setUser(user)
+
+                val uid: String = userViewModel.uid.value!!
+                //TODO try catch errori
+                val userDataFromDB = UserStorage.findOne(uid)
+
+                // sync data with the DB
+                val localMaxScore = userViewModel.maxScore.value!!
+                if (userDataFromDB != null) {
+                    if(localMaxScore > userDataFromDB.maxScore!!) {
+                        userDataFromDB.maxScore = userViewModel.maxScore.value
+                        UserStorage.updateScore(localMaxScore, uid)
+                    }
+                    userViewModel.setDataFromDB(userDataFromDB)
+                }
+                else {
+                    val userToInsert = UserData(
+                        maxScore = localMaxScore,
+                        nationality = 0,
+                        name = userViewModel.displayName.value!!
+                    )
+                    UserStorage.createDocument(userToInsert, uid)
+                }
+
+                navController.run {
+                    popBackStack()
+                    navigate(R.id.navigation_profile)
+                }
+            }
+            
+            else -> navController.popBackStack(R.id.navigation_play, false)
+        }
+    }
+
+    private fun logOut() {
+        context?.let {
+            AuthUI.getInstance()
+                .signOut(it)
+                .addOnCompleteListener {
+                    userViewModel.setUser(null)
+                    findNavController().popBackStack(R.id.navigation_profile, false)
+                }
+                .addOnFailureListener{
+                    //TODO errori
+                }
         }
     }
 }

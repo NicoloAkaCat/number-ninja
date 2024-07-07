@@ -24,13 +24,14 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
 
+        // check if the user logged in a previous session with the app
         val user = FirebaseAuth.getInstance().currentUser
         if(user != null){
             userViewModel.setUser(user)
 
             val uid: String = userViewModel.uid.value!!
+            //TODO try catch errori
             val userDb = UserStorage.findOne(uid)
-
             if(userDb != null) userViewModel.setDataFromDB(userDb)
         }
 

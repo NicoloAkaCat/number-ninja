@@ -82,7 +82,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.42999998" />
+            app:layout_constraintVertical_bias="0.46" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/play_btn"
@@ -94,7 +94,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.59000003" />
+            app:layout_constraintVertical_bias="0.60" />
 
         <!-- SHOW NUMBER GROUP -->
         <androidx.constraintlayout.widget.Group
