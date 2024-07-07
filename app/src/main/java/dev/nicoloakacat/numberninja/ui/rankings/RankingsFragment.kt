@@ -10,14 +10,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import dev.nicoloakacat.numberninja.Nationalities
 import dev.nicoloakacat.numberninja.R
 import dev.nicoloakacat.numberninja.UserData
 import dev.nicoloakacat.numberninja.UserStorage
 import dev.nicoloakacat.numberninja.databinding.FragmentRankingsBinding
 
 class RankingAdapter(private val dataSet: MutableList<UserData>) : RecyclerView.Adapter<RankingAdapter.RankingViewHolder>() {
-    class RankingViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class RankingViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val playerCardNameTextView: TextView = view.findViewById(R.id.player_card_name)
         val playerCardScoreTextView: TextView = view.findViewById(R.id.player_card_score)
     }
@@ -30,10 +29,8 @@ class RankingAdapter(private val dataSet: MutableList<UserData>) : RecyclerView.
     override fun onBindViewHolder(holder: RankingViewHolder, position: Int) {
         Log.d("USERS", dataSet[position].name.toString())
 
-        val nationalityIndex = dataSet[position].nationality!!
-        val nationalityFlag = Nationalities.entries[nationalityIndex].flag
-
-        holder.playerCardNameTextView.text = dataSet[position].name + " " + nationalityFlag
+        //TODO add icon drawable
+        holder.playerCardNameTextView.text = dataSet[position].name
         holder.playerCardScoreTextView.text = dataSet[position].maxScore.toString()
     }
 
@@ -42,11 +39,7 @@ class RankingAdapter(private val dataSet: MutableList<UserData>) : RecyclerView.
 
 class RankingsFragment : Fragment() {
 
-    private var _binding: FragmentRankingsBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentRankingsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,14 +48,16 @@ class RankingsFragment : Fragment() {
     ): View {
         val rankingsViewModel: RankingsViewModel by viewModels()
 
-        _binding = FragmentRankingsBinding.inflate(inflater, container, false)
+        binding = FragmentRankingsBinding.inflate(inflater, container, false)
         binding.viewModel = rankingsViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //TODO errori
         val users = UserStorage.findAll()
         val rankingAdapter = RankingAdapter(users)
 
@@ -71,8 +66,4 @@ class RankingsFragment : Fragment() {
         recyclerView.adapter = rankingAdapter
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }
