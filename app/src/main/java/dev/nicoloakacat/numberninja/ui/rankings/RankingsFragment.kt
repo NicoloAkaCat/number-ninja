@@ -1,5 +1,6 @@
 package dev.nicoloakacat.numberninja.ui.rankings
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,24 +15,23 @@ import dev.nicoloakacat.numberninja.R
 import dev.nicoloakacat.numberninja.db.UserData
 import dev.nicoloakacat.numberninja.db.UserStorage
 import dev.nicoloakacat.numberninja.databinding.FragmentRankingsBinding
+import dev.nicoloakacat.numberninja.databinding.ItemRankingsBinding
 
-class RankingAdapter(private val dataSet: MutableList<UserData>) : RecyclerView.Adapter<RankingAdapter.RankingViewHolder>() {
-    inner class RankingViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val playerCardNameTextView: TextView = view.findViewById(R.id.player_card_name)
-        val playerCardScoreTextView: TextView = view.findViewById(R.id.player_card_score)
-    }
+class RankingAdapter(private val pContext: Context, private val dataSet: MutableList<UserData>) : RecyclerView.Adapter<RankingAdapter.RankingViewHolder>() {
+    inner class RankingViewHolder(val view: ItemRankingsBinding) : RecyclerView.ViewHolder(view.root) {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RankingViewHolder {
-        val layout = LayoutInflater.from(parent.context).inflate(R.layout.player_card_layout, parent, false)
-        return  RankingViewHolder(layout)
+        val binding = ItemRankingsBinding.inflate(LayoutInflater.from(pContext), parent, false)
+        return  RankingViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RankingViewHolder, position: Int) {
         Log.d("USERS", dataSet[position].name.toString())
 
         //TODO add icon drawable
-        holder.playerCardNameTextView.text = dataSet[position].name
-        holder.playerCardScoreTextView.text = dataSet[position].maxScore.toString()
+        val binding = holder.view
+        binding.playerCardName.text = dataSet[position].name
+        binding.playerCardScore.text = dataSet[position].maxScore.toString()
     }
 
     override fun getItemCount(): Int = dataSet.size
@@ -59,7 +59,7 @@ class RankingsFragment : Fragment() {
 
         //TODO errori
         val users = UserStorage.findAll()
-        val rankingAdapter = RankingAdapter(users)
+        val rankingAdapter = RankingAdapter(requireContext(), users)
 
         val recyclerView = binding.topUsers
         recyclerView.layoutManager = LinearLayoutManager(context)
