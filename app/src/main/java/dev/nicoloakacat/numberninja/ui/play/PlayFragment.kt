@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
-import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -16,6 +15,8 @@ import dev.nicoloakacat.numberninja.R
 import dev.nicoloakacat.numberninja.UserStorage
 import dev.nicoloakacat.numberninja.UserViewModel
 import dev.nicoloakacat.numberninja.databinding.FragmentPlayBinding
+import dev.nicoloakacat.numberninja.hide
+import dev.nicoloakacat.numberninja.show
 
 
 class PlayFragment : Fragment() {
@@ -107,9 +108,6 @@ class PlayFragment : Fragment() {
         }
         return n
     }
-
-    private val show = { v: Group -> v.visibility = View.VISIBLE }
-    private val hide = { v: Group -> v.visibility = View.GONE }
 
     private fun showResultMessage(resMsg: Chip) {
         resMsg.visibility = View.VISIBLE
