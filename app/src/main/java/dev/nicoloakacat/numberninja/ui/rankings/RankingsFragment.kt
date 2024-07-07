@@ -12,11 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.nicoloakacat.numberninja.Nationalities
 import dev.nicoloakacat.numberninja.R
-import dev.nicoloakacat.numberninja.UserDB
+import dev.nicoloakacat.numberninja.UserData
 import dev.nicoloakacat.numberninja.UserStorage
 import dev.nicoloakacat.numberninja.databinding.FragmentRankingsBinding
 
-class RankingAdapter(private val dataSet: MutableList<UserDB>) : RecyclerView.Adapter<RankingAdapter.RankingViewHolder>() {
+class RankingAdapter(private val dataSet: MutableList<UserData>) : RecyclerView.Adapter<RankingAdapter.RankingViewHolder>() {
     class RankingViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val playerCardNameTextView: TextView = view.findViewById(R.id.player_card_name)
         val playerCardScoreTextView: TextView = view.findViewById(R.id.player_card_score)
