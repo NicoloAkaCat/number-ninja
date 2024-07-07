@@ -11,13 +11,13 @@ class UserViewModel: ViewModel() {
     private val _displayName = MutableLiveData<String?>(null)
     private val _uid = MutableLiveData<String?>(null)
     private val _maxScore = MutableLiveData<Int>(0)
-    private val _nationality = MutableLiveData<Int>(0)
+    private val _nationality = MutableLiveData<String>("Unknown")
 
     val displayName: LiveData<String?> = _displayName
     val uid: LiveData<String?> = _uid
     val isUserLogged: LiveData<Boolean> = _isUserLogged
     val maxScore: LiveData<Int> = _maxScore
-    val nationality: LiveData<Int> = _nationality
+    val nationality: LiveData<String> = _nationality
 
     val setUser = {user: FirebaseUser? ->
         _user.value = user

@@ -12,11 +12,12 @@
     android:layout_height="match_parent"
     tools:context=".ui.profile.ProfileFragment">
 
+    <!-- LOGIN SCREEN -->
     <androidx.constraintlayout.widget.Group
         android:id="@+id/not_logged_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:constraint_referenced_ids="profile_login_button, profile_login_text" />
 
     <TextView
@@ -44,38 +45,120 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.60" />
 
+
+    <!-- PROFILE SCREEN -->
     <androidx.constraintlayout.widget.Group
         android:id="@+id/logged_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="text_profile, logout_btn" />
+        android:visibility="visible"
+        app:constraint_referenced_ids="profile_card_data, profile_update_button, profile_logout_button" />
 
-    <TextView
-        android:id="@+id/text_profile"
-        android:text="@{viewModel.displayName}"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/profile_card_data"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/profile_update_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginHorizontal="25dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="25dp"
+        app:cardCornerRadius="10dp"
+
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp">
+
+            <TextView
+                android:id="@+id/profile_card_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_profile"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.05" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/profile_card_name_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_card_title"
+                app:layout_constraintVertical_bias="0.1"
+                android:layout_marginHorizontal="50dp"
+                android:hint="@string/profile_name"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/profile_card_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewModel.displayName}"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/profile_card_nationality_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                app:startIconTint="@null"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_card_name_box"
+                app:layout_constraintVertical_bias="0.1"
+                android:layout_marginHorizontal="50dp"
+                >
+
+                <AutoCompleteTextView
+                    android:hint="@string/profile_nationality"
+                    android:id="@+id/profile_card_nationality"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="none"
+                    android:text="@{viewModel.nationality}"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/profile_update_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
+        style="@style/buttonStyle"
+        android:text="@string/profile_update_btn"
+        android:backgroundTint="?attr/colorSecondary"
+        android:textColor="?attr/colorOnSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.65"/>
 
-    <Button
-        android:id="@+id/logout_btn"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/profile_logout_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="231dp"
-        android:layout_marginBottom="77dp"
+        style="@style/buttonStyle"
         android:text="@string/profile_logout_btn"
-        app:layout_constraintBottom_toTopOf="@+id/text_profile"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

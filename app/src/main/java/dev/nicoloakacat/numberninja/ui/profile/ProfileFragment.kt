@@ -5,19 +5,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import dev.nicoloakacat.numberninja.databinding.FragmentProfileBinding
 import androidx.navigation.fragment.findNavController
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
+import dev.nicoloakacat.numberninja.Nationality
 import dev.nicoloakacat.numberninja.R
 import dev.nicoloakacat.numberninja.UserData
 import dev.nicoloakacat.numberninja.UserStorage
 import dev.nicoloakacat.numberninja.UserViewModel
+import dev.nicoloakacat.numberninja.getFlagUri
+import dev.nicoloakacat.numberninja.hide
+import dev.nicoloakacat.numberninja.show
 
 class ProfileFragment : Fragment() {
 
@@ -32,13 +38,25 @@ class ProfileFragment : Fragment() {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
         binding.viewModel = userViewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        userViewModel.isUserLogged.observe(viewLifecycleOwner) {
-            if(it){
-                binding.notLoggedGroup.visibility = View.GONE
-                binding.loggedGroup.visibility = View.VISIBLE
+
+        userViewModel.isUserLogged.observe(viewLifecycleOwner) {logged ->
+            if(logged){
+                hide(binding.notLoggedGroup)
+                show(binding.loggedGroup)
+                // setting list of nationalities
+                val nations = Nationality.entries.map { n -> n.toString().replace("_", " ") }
+                val nationalityAdapter = ArrayAdapter(requireContext(), R.layout.item_nationality, nations)
+                binding.profileCardNationality.setAdapter(nationalityAdapter)
+                setFlagIcon(userViewModel.nationality.value!!)
+
+                // changing flag icon when user selects another nationality!
+                binding.profileCardNationality.setOnItemClickListener{ _, _, position: Int, _ ->
+                    val nationalitySelected = nations[position]
+                    setFlagIcon(nationalitySelected)
+                }
             }else {
-                binding.notLoggedGroup.visibility = View.VISIBLE
-                binding.loggedGroup.visibility = View.GONE
+                show(binding.notLoggedGroup)
+                hide(binding.loggedGroup)
             }
         }
 
@@ -56,7 +74,7 @@ class ProfileFragment : Fragment() {
                 .build()
             signInLauncher.launch(signInIntent)
         }
-        binding.logoutBtn.setOnClickListener {
+        binding.profileLogoutButton.setOnClickListener {
             logOut()
         }
     }
@@ -95,7 +113,7 @@ class ProfileFragment : Fragment() {
                 else {
                     val userToInsert = UserData(
                         maxScore = localMaxScore,
-                        nationality = 0,
+                        nationality = "Unknown",
                         name = userViewModel.displayName.value!!
                     )
                     UserStorage.createDocument(userToInsert, uid)
@@ -106,7 +124,7 @@ class ProfileFragment : Fragment() {
                     navigate(R.id.navigation_profile)
                 }
             }
-            
+
             else -> navController.popBackStack(R.id.navigation_play, false)
         }
     }
@@ -123,5 +141,13 @@ class ProfileFragment : Fragment() {
                     //TODO errori
                 }
         }
+    }
+
+    private fun setFlagIcon(nationality: String) {
+        binding.profileCardNationalityBox.startIconDrawable = ResourcesCompat.getDrawable(
+            resources,
+            resources.getIdentifier(getFlagUri(nationality), null, null),
+            null
+        )
     }
 }

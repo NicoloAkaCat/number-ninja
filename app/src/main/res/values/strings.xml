@@ -16,4 +16,8 @@
     <string name="profile_login_text">Login to save your progress!</string>
     <string name="profile_login_btn">Login</string>
     <string name="profile_logout_btn">Logout</string>
+    <string name="profile_profile">Profile</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_nationality">Nationality</string>
+    <string name="profile_update_btn">Update</string>
 </resources>
