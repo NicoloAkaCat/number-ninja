@@ -29,6 +29,11 @@ class ProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
     private val userViewModel: UserViewModel by activityViewModels()
+    private val nations = Nationality.entries.map { n -> n.toString().replace("_", " ") }
+    private val providers = arrayListOf(
+        AuthUI.IdpConfig.EmailBuilder().build(),
+        AuthUI.IdpConfig.GoogleBuilder().build()
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,16 +49,9 @@ class ProfileFragment : Fragment() {
                 hide(binding.notLoggedGroup)
                 show(binding.loggedGroup)
                 // setting list of nationalities
-                val nations = Nationality.entries.map { n -> n.toString().replace("_", " ") }
                 val nationalityAdapter = ArrayAdapter(requireContext(), R.layout.item_nationality, nations)
                 binding.profileCardNationality.setAdapter(nationalityAdapter)
                 setFlagIcon(userViewModel.nationality.value!!)
-
-                // changing flag icon when user selects another nationality!
-                binding.profileCardNationality.setOnItemClickListener{ _, _, position: Int, _ ->
-                    val nationalitySelected = nations[position]
-                    setFlagIcon(nationalitySelected)
-                }
             }else {
                 show(binding.notLoggedGroup)
                 hide(binding.loggedGroup)
@@ -65,6 +63,13 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // changing flag icon when user selects another nationality!
+        binding.profileCardNationality.setOnItemClickListener{ _, _, position: Int, _ ->
+            val nationalitySelected = nations[position]
+            setFlagIcon(nationalitySelected)
+        }
+
+        // login
         binding.profileLoginButton.setOnClickListener {
             val signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
@@ -74,15 +79,12 @@ class ProfileFragment : Fragment() {
                 .build()
             signInLauncher.launch(signInIntent)
         }
+
+        // logout
         binding.profileLogoutButton.setOnClickListener {
             logOut()
         }
     }
-
-    private val providers = arrayListOf(
-        AuthUI.IdpConfig.EmailBuilder().build(),
-        AuthUI.IdpConfig.GoogleBuilder().build()
-    )
 
     private val signInLauncher = registerForActivityResult(
         FirebaseAuthUIActivityResultContract(),

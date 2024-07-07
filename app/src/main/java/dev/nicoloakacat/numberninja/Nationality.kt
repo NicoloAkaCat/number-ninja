@@ -100,7 +100,7 @@ enum class Nationality(val code: String ) {
         Heard_Island_Mcdonald_Islands("HM"),
         Holy_See_Vatican_City_State("VA"),
         Honduras("HN"),
-        HongKong("HK"),
+        Hong_Kong("HK"),
         Hungary("HU"),
         Iceland("IS"),
         India("IN"),
