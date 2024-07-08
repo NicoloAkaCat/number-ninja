@@ -17,4 +17,13 @@
         <item name="chipStrokeColor">@color/error_dark</item>
         <item name="android:clickable">false</item>
     </style>
+    <style name="scoreBig" parent="@android:style/Widget.TextView">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#DD000000</item>
+    </style>
+    <style name="scoreSmall" parent="@android:style/Widget.TextView">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#DD000000</item>
+    </style>
 </resources>
