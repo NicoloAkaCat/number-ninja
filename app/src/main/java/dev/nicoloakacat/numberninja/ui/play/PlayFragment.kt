@@ -101,7 +101,7 @@ class PlayFragment : Fragment() {
     private fun getRandomNumber(digits: Int): String {
         var n = ""
         repeat(digits){
-            n += if(it == 1)
+            n += if(it == 0)
                 (1..9).random().toString()
             else
                 (0..9).random().toString()
