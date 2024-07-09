@@ -20,4 +20,7 @@
     <string name="profile_name">Name</string>
     <string name="profile_nationality">Nationality</string>
     <string name="profile_update_btn">Update</string>
+
+    <!-- Rankings strings -->
+    <string name="rankings_flag_description">Player\'s flag</string>
 </resources>

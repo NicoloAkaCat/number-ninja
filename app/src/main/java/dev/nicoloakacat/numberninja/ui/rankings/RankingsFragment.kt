@@ -1,12 +1,15 @@
 package dev.nicoloakacat.numberninja.ui.rankings
 
 import android.content.Context
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +19,7 @@ import dev.nicoloakacat.numberninja.db.UserData
 import dev.nicoloakacat.numberninja.db.UserStorage
 import dev.nicoloakacat.numberninja.databinding.FragmentRankingsBinding
 import dev.nicoloakacat.numberninja.databinding.ItemRankingsBinding
+import dev.nicoloakacat.numberninja.getFlagUri
 
 class RankingAdapter(private val pContext: Context, private val dataSet: MutableList<UserData>) : RecyclerView.Adapter<RankingAdapter.RankingViewHolder>() {
     inner class RankingViewHolder(val view: ItemRankingsBinding) : RecyclerView.ViewHolder(view.root) {}
@@ -26,12 +30,17 @@ class RankingAdapter(private val pContext: Context, private val dataSet: Mutable
     }
 
     override fun onBindViewHolder(holder: RankingViewHolder, position: Int) {
-        Log.d("USERS", dataSet[position].name.toString())
-
-        //TODO add icon drawable
         val binding = holder.view
+        binding.playerCardFlag.setImageDrawable(ResourcesCompat.getDrawable(
+            pContext.resources,
+            pContext.resources.getIdentifier(getFlagUri(dataSet[position].nationality!!), null, null),
+            null
+        ))
         binding.playerCardName.text = dataSet[position].name
         binding.playerCardScore.text = dataSet[position].maxScore.toString()
+        binding.playerCardScore.setTextAppearance(
+            if(position in 0..2) R.style.scoreBig else R.style.scoreSmall
+        )
     }
 
     override fun getItemCount(): Int = dataSet.size
@@ -61,7 +70,7 @@ class RankingsFragment : Fragment() {
         val users = UserStorage.findAll()
         val rankingAdapter = RankingAdapter(requireContext(), users)
 
-        val recyclerView = binding.topUsers
+        val recyclerView = binding.rankingsRv
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = rankingAdapter
     }
