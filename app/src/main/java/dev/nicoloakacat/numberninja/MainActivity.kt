@@ -9,9 +9,18 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import androidx.work.impl.WorkManagerImpl
 import com.google.firebase.auth.FirebaseAuth
 import dev.nicoloakacat.numberninja.databinding.ActivityMainBinding
 import dev.nicoloakacat.numberninja.db.UserStorage
@@ -19,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,6 +45,34 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun runBackground() {
+        val inputData = Data.Builder()
+            .putString("uid", userViewModel.uid.value!!)
+            .putInt("maxScore", userViewModel.maxScore.value!!)
+            .putLong("nBetterPlayers", userViewModel.nBetterPlayers.value!!)
+
+        val rankTrackerRequest: WorkRequest = OneTimeWorkRequestBuilder<RankTrackerWorker>()
+            .setInputData(inputData.build())
+            .build()
+
+        val workManager = WorkManager.getInstance(this)
+        workManager.enqueue(rankTrackerRequest)
+
+        workManager.getWorkInfoByIdLiveData(rankTrackerRequest.id)
+            .observe(this, Observer { workInfo ->
+                if(workInfo != null && workInfo.state.isFinished) {
+                    if(workInfo.state == WorkInfo.State.SUCCEEDED) {
+                        val newBetterPlayersCount = workInfo.outputData.getLong("nBetterPlayers", Long.MAX_VALUE)
+
+                        if(newBetterPlayersCount != Long.MAX_VALUE) {
+                            userViewModel.setBetterPlayersCount(newBetterPlayersCount)
+                            Log.d("COUNT", "New count: ${userViewModel.nBetterPlayers.value}")
+                        }
+                    }
+                }
+            })
+    }
+
     private suspend fun setUserIfLogged() {
         // check if the user logged in a previous session with the app
         val user = FirebaseAuth.getInstance().currentUser
@@ -45,6 +83,8 @@ class MainActivity : AppCompatActivity() {
             //TODO try catch errori
             val userDb = UserStorage.findOne(uid)
             if(userDb != null) userViewModel.setDataFromDB(userDb)
+
+            runBackground()
         }
     }
 
