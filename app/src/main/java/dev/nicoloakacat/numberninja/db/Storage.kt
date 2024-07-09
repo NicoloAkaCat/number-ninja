@@ -1,7 +1,9 @@
 package dev.nicoloakacat.numberninja.db
 
 import android.util.Log
+import com.firebase.ui.auth.data.model.User
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
@@ -20,18 +22,31 @@ object UserStorage {
     private const val COLLECTION_NAME: String = "users"
 
     fun createDocument(userData: UserData, uid: String) {
-        runBlocking {
-            try {
-                firestore()
-                    .collection(COLLECTION_NAME)
-                    .document(uid)
-                    .set(userData)
-            }
-            catch (e: Exception) {
-                Log.e("CREATE_DOCUMENT", e.message ?: "An Error Occurred")
-                throw e
-            }
+        try {
+            firestore()
+                .collection(COLLECTION_NAME)
+                .document(uid)
+                .set(userData)
         }
+        catch (e: Exception) {
+            Log.e("CREATE_DOCUMENT", e.message ?: "An Error Occurred")
+            throw e
+        }
+    }
+
+    fun updateBetterPlayersCount(count: Long, uid: String) {
+        Thread {
+            firestore()
+                .collection(COLLECTION_NAME)
+                .document(uid)
+                .update("nBetterPlayers", count)
+                .addOnSuccessListener {
+                    Log.e("UPDATE_BETTER_PLAYERS", "SUCCESS: $count")
+                }
+                .addOnFailureListener {
+                    Log.e("UPDATE_BETTER_PLAYERS", "ERROR")
+                }
+        }.start()
     }
 
     fun updateScore(newScore: Int, uid: String) {
@@ -63,19 +78,17 @@ object UserStorage {
         }
     }
 
-    fun findOne(uid: String): UserData? {
-        return runBlocking {
-            try {
-                val doc = firestore()
-                    .collection(COLLECTION_NAME)
-                    .document(uid)
+    suspend fun findOne(uid: String): UserData? {
+        try {
+            val doc = firestore()
+                .collection(COLLECTION_NAME)
+                .document(uid)
 
-                return@runBlocking doc.get().await().toObject<UserData>()
-            }
-            catch (e: Exception) {
-                Log.e("FIND_ONE", e.message ?: "An Error Occurred")
-                throw e
-            }
+            return doc.get().await().toObject<UserData>()
+        }
+        catch (e: Exception) {
+            Log.e("FIND_ONE", e.message ?: "An Error Occurred")
+            throw e
         }
     }
 
@@ -110,5 +123,13 @@ object UserStorage {
                 throw e
             }
         }
+    }
+
+    suspend fun countBetterPlayersThan(maxScore: Int): Long {
+        val doc = firestore()
+            .collection(COLLECTION_NAME)
+            .whereGreaterThan("maxScore", maxScore)
+
+        return doc.count().get(AggregateSource.SERVER).await().count
     }
 }

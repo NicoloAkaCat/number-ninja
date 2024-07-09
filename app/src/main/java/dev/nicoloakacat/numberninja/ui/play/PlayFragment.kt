@@ -10,6 +10,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.firebase.ui.auth.data.model.User
 import com.google.android.material.chip.Chip
 import dev.nicoloakacat.numberninja.R
 import dev.nicoloakacat.numberninja.db.UserStorage
@@ -17,6 +19,7 @@ import dev.nicoloakacat.numberninja.UserViewModel
 import dev.nicoloakacat.numberninja.databinding.FragmentPlayBinding
 import dev.nicoloakacat.numberninja.hide
 import dev.nicoloakacat.numberninja.show
+import kotlinx.coroutines.launch
 
 
 class PlayFragment : Fragment() {
@@ -38,6 +41,20 @@ class PlayFragment : Fragment() {
         binding.userViewModel = userViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
+    }
+
+    private suspend fun updateMaxScore() {
+        if(userViewModel.isUserLogged.value!! && this.playerHasNewMaxScore) {
+            lifecycleScope.launch {
+                UserStorage.updateScore(userViewModel.maxScore.value!!, userViewModel.uid.value!!)
+                val count = UserStorage.countBetterPlayersThan(userViewModel.maxScore.value!!)
+
+                if(count != userViewModel.nBetterPlayers.value) {
+                    UserStorage.updateBetterPlayersCount(count, userViewModel.uid.value!!)
+                }
+            }
+
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -78,9 +95,7 @@ class PlayFragment : Fragment() {
                 viewModel.startCountdown()
             }else{
                 showResultMessage(binding.playResultMessageError)
-                if(userViewModel.isUserLogged.value!! && this.playerHasNewMaxScore) {
-                    UserStorage.updateScore(userViewModel.maxScore.value!!, userViewModel.uid.value!!)
-                }
+                lifecycleScope.launch { updateMaxScore() }
                 currentDigit = 1
                 hide(binding.guessNumberGroup)
                 show(binding.introGroup)
@@ -93,9 +108,7 @@ class PlayFragment : Fragment() {
         // if the user change page before the countdown has ended we need to stop it
         viewModel.stopCountdown()
 
-        if(userViewModel.isUserLogged.value!! && this.playerHasNewMaxScore) {
-            UserStorage.updateScore(userViewModel.maxScore.value!!, userViewModel.uid.value!!)
-        }
+        lifecycleScope.launch { updateMaxScore() }
     }
 
     private fun getRandomNumber(digits: Int): String {

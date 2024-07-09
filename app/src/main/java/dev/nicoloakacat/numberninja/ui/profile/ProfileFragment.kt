@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import dev.nicoloakacat.numberninja.databinding.FragmentProfileBinding
 import androidx.navigation.fragment.findNavController
 import com.firebase.ui.auth.AuthUI
@@ -26,6 +27,7 @@ import dev.nicoloakacat.numberninja.UserViewModel
 import dev.nicoloakacat.numberninja.getFlagUri
 import dev.nicoloakacat.numberninja.hide
 import dev.nicoloakacat.numberninja.show
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
@@ -99,7 +101,7 @@ class ProfileFragment : Fragment() {
         this.onSignInResult(res)
     }
 
-    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) = lifecycleScope.launch {
         val navController = findNavController()
         when(result.resultCode){
             RESULT_OK -> {
@@ -112,18 +114,27 @@ class ProfileFragment : Fragment() {
 
                 // sync data with the DB
                 val localMaxScore = userViewModel.maxScore.value!!
+                val nBetterPlayers = UserStorage.countBetterPlayersThan(localMaxScore)
+
                 if (userDataFromDB != null) {
                     if(localMaxScore > userDataFromDB.maxScore!!) {
                         userDataFromDB.maxScore = userViewModel.maxScore.value
                         UserStorage.updateScore(localMaxScore, uid)
                     }
+
+                    if(nBetterPlayers != userDataFromDB.nBetterPlayers) {
+                        userDataFromDB.nBetterPlayers = nBetterPlayers
+                        UserStorage.updateBetterPlayersCount(nBetterPlayers, uid)
+                    }
+
                     userViewModel.setDataFromDB(userDataFromDB)
                 }
                 else {
                     val userToInsert = UserData(
                         maxScore = localMaxScore,
                         nationality = "Unknown",
-                        name = userViewModel.displayName.value!!
+                        name = userViewModel.displayName.value!!,
+                        nBetterPlayers = nBetterPlayers
                     )
                     UserStorage.createDocument(userToInsert, uid)
                 }
