@@ -27,7 +27,7 @@ class RankTrackerWorker(appContext: Context, workerParams: WorkerParameters) : C
                 context = applicationContext,
                 autoCancel = true
             )
-            NotificationManager().sendNotification(notification)
+            NotificationHandler.sendNotification(notification)
 
             val returnData = Data.Builder()
                 .putLong("nBetterPlayers", newBetterPlayersCount)

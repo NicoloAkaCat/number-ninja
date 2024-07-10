@@ -43,26 +43,11 @@ class PlayFragment : Fragment() {
         return binding.root
     }
 
-    private suspend fun updateMaxScore() {
-        if(userViewModel.isUserLogged.value!! && this.playerHasNewMaxScore) {
-            lifecycleScope.launch {
-                UserStorage.updateScore(userViewModel.maxScore.value!!, userViewModel.uid.value!!)
-                val count = UserStorage.countBetterPlayersThan(userViewModel.maxScore.value!!)
-
-                if(count != userViewModel.nBetterPlayers.value) {
-                    UserStorage.updateBetterPlayersCount(count, userViewModel.uid.value!!)
-                }
-            }
-
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        this.playerHasNewMaxScore = false
-
         super.onViewCreated(view, savedInstanceState)
+        playerHasNewMaxScore = false
         currentDigit = 1
+
         binding.playBtn.setOnClickListener {
             viewModel.setNumberToGuess(getRandomNumber(currentDigit))
             hide(binding.introGroup)
@@ -86,7 +71,7 @@ class PlayFragment : Fragment() {
                 showResultMessage(binding.playResultMessageSuccess)
                 if(currentDigit > userViewModel.maxScore.value!!) {
                     userViewModel.setMaxScore(currentDigit)
-                    this.playerHasNewMaxScore = true
+                    playerHasNewMaxScore = true
                 }
                 currentDigit += 1
                 viewModel.setNumberToGuess(getRandomNumber(currentDigit))
@@ -109,6 +94,20 @@ class PlayFragment : Fragment() {
         viewModel.stopCountdown()
 
         lifecycleScope.launch { updateMaxScore() }
+    }
+
+    private suspend fun updateMaxScore() {
+        if(userViewModel.isUserLogged.value!! && playerHasNewMaxScore) {
+            lifecycleScope.launch {
+                UserStorage.updateScore(userViewModel.maxScore.value!!, userViewModel.uid.value!!)
+                val count = UserStorage.countBetterPlayersThan(userViewModel.maxScore.value!!)
+
+                if(count != userViewModel.nBetterPlayers.value) {
+                    UserStorage.updateBetterPlayersCount(count, userViewModel.uid.value!!)
+                }
+            }
+
+        }
     }
 
     private fun getRandomNumber(digits: Int): String {
