@@ -57,12 +57,11 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.firebase:firebase-firestore")
-
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
-    // For control over item selection of both touch and mouse driven selection
-    implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
     implementation("com.google.firebase:firebase-messaging")
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation(libs.androidx.recyclerview)
+    // For control over item selection of both touch and mouse driven selection
+    implementation(libs.androidx.recyclerview.selection)
+    implementation(libs.androidx.work.runtime.ktx)
 
 
 }
