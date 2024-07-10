@@ -87,12 +87,18 @@ class MainActivity : AppCompatActivity() {
         workManager.getWorkInfoByIdLiveData(rankTrackerRequest.id)
             .observe(this, Observer { workInfo ->
                 if(workInfo != null && workInfo.state.isFinished) {
-                    if(workInfo.state == WorkInfo.State.SUCCEEDED) {
-                        val newBetterPlayersCount = workInfo.outputData.getLong("nBetterPlayers", Long.MAX_VALUE)
 
-                        if(newBetterPlayersCount != Long.MAX_VALUE) {
-                            userViewModel.setBetterPlayersCount(newBetterPlayersCount)
-                            Log.d("COUNT", "New count: ${userViewModel.nBetterPlayers.value}")
+                    when(workInfo.state){
+                        WorkInfo.State.SUCCEEDED -> {
+                            val newBetterPlayersCount = workInfo.outputData.getLong("nBetterPlayers", Long.MAX_VALUE)
+                            // if value is different from the fallback value of Max Long
+                            if(newBetterPlayersCount != Long.MAX_VALUE) {
+                                userViewModel.setBetterPlayersCount(newBetterPlayersCount)
+                                Log.d("RANK_WORKER", "New count: ${userViewModel.nBetterPlayers.value}")
+                            }
+                        }
+                        else -> {
+                            Log.d("RANK_WORKER", "An Error occured in Ranking Worker")
                         }
                     }
                 }

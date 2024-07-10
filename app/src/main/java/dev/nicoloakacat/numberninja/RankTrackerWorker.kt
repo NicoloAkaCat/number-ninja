@@ -21,17 +21,19 @@ class RankTrackerWorker(appContext: Context, workerParams: WorkerParameters) : C
             UserStorage.updateBetterPlayersCount(newBetterPlayersCount, uid!!)
 
             val notification = Notification(
-                title = "Qualcuno ha battuto il tuo record :(",
-                body = "Oh no! Qualcuno ha battuto il tuo record mentre eri offline...",
+                title = "Qualcuno ha battuto il tuo record :(", //TODO string
+                body = "Oh no! Qualcuno ha battuto il tuo record mentre eri offline...", //TODO string
                 channel = "default_channel",
                 context = applicationContext,
                 autoCancel = true
             )
             NotificationHandler.sendNotification(notification)
 
-            val returnData = Data.Builder()
+            return Result.success(
+                Data.Builder()
                 .putLong("nBetterPlayers", newBetterPlayersCount)
-            return Result.success(returnData.build())
+                .build()
+            )
         }
         else if(newBetterPlayersCount < currentBetterPlayersCount) {
             Log.d("WORKER", "You beat someone score!")
