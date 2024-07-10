@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.nicoloakacat.numberninja.R
@@ -15,10 +17,13 @@ import dev.nicoloakacat.numberninja.db.UserStorage
 import dev.nicoloakacat.numberninja.databinding.FragmentRankingsBinding
 import dev.nicoloakacat.numberninja.databinding.ItemRankingsBinding
 import dev.nicoloakacat.numberninja.getFlagUri
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class RankingAdapter(
     private val pContext: Context,
-    private val dataSet: MutableList<UserData>
+    private val dataSet: List<UserData>
 ) : RecyclerView.Adapter<RankingAdapter.RankingViewHolder>() {
     inner class RankingViewHolder(val view: ItemRankingsBinding) : RecyclerView.ViewHolder(view.root) {}
 
@@ -47,6 +52,7 @@ class RankingAdapter(
 class RankingsFragment : Fragment() {
 
     private lateinit var binding: FragmentRankingsBinding
+    private val viewModel: RankingsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,13 +68,18 @@ class RankingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //TODO errori
-        val users = UserStorage.findAll()
-        val rankingAdapter = RankingAdapter(requireContext(), users)
-
         val recyclerView = binding.rankingsRv
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = rankingAdapter
+
+        //TODO errori
+        lifecycleScope.launch {
+            val users = UserStorage.findAll()
+            viewModel.setUsers(users)
+        }
+        viewModel.users.observe(viewLifecycleOwner){
+            val rankingAdapter = RankingAdapter(requireContext(), viewModel.users.value!!)
+            recyclerView.adapter = rankingAdapter
+        }
     }
 
 }

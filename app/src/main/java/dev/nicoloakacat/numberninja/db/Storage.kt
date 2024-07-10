@@ -92,36 +92,31 @@ object UserStorage {
         }
     }
 
-    fun findAll(
+    suspend fun findAll(
         orderBy: String = "maxScore",
         direction: Query.Direction = Query.Direction.DESCENDING,
         limit: Long = 0,
         offset: Int = 0
     ): MutableList<UserData> {
-        return runBlocking {
+        val users = mutableListOf<UserData>()
+        try {
+            var doc = firestore()
+                .collection(COLLECTION_NAME)
+                .orderBy(orderBy, direction)
 
-            val users = mutableListOf<UserData>()
+            if(limit > 0) doc = doc.limit(limit)
+            if(offset > 0) doc = doc.startAfter(offset)
 
-            try {
-                var doc = firestore()
-                    .collection(COLLECTION_NAME)
-                    .orderBy(orderBy, direction)
-
-                if(limit > 0) doc = doc.limit(limit)
-                if(offset > 0) doc = doc.startAfter(offset)
-
-                val fetchedUsers = doc.get().await()
-                for(user in fetchedUsers) {
-                    //Log.d("USER", user.toString())
-                    users.add(user.toObject<UserData>())
-                }
-
-                return@runBlocking users
+            val fetchedUsers = doc.get().await()
+            for(user in fetchedUsers) {
+                //Log.d("USER", user.toString())
+                users.add(user.toObject<UserData>())
             }
-            catch (e: Exception) {
-                Log.e("FIND_ALL", e.message ?: "An Error Occurred")
-                throw e
-            }
+            return users
+        }
+        catch (e: Exception) {
+            Log.e("FIND_ALL", e.message ?: "An Error Occurred")
+            throw e
         }
     }
 
