@@ -18,9 +18,6 @@ class RankTrackerWorker(appContext: Context, workerParams: WorkerParameters) : C
         try{
             val newBetterPlayersCount = UserStorage.countBetterPlayersThan(maxScore)
 
-            //TODO rimuovere
-            Log.e("WORKER", "currentBetter: $currentBetterPlayersCount, newBetter: $newBetterPlayersCount")
-
             if(newBetterPlayersCount > currentBetterPlayersCount) {
                 Log.d("WORKER", "Someone beat your high score :(")
                 UserStorage.updateBetterPlayersCount(newBetterPlayersCount, uid!!)

@@ -82,7 +82,7 @@ class ProfileFragment : Fragment() {
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
                 .setTheme(R.style.Theme_NumberNinja)
-                .setIsSmartLockEnabled(false) //TODO togliere? non va
+                .setIsSmartLockEnabled(false) // even disabling email enumeration protection and adding SHA-1 fingerprint it doesn't work properly without this line
                 .build()
             signInLauncher.launch(signInIntent)
         }
