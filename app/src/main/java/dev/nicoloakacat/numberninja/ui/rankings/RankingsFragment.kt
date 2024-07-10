@@ -2,6 +2,7 @@ package dev.nicoloakacat.numberninja.ui.rankings
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import dev.nicoloakacat.numberninja.db.UserStorage
 import dev.nicoloakacat.numberninja.databinding.FragmentRankingsBinding
 import dev.nicoloakacat.numberninja.databinding.ItemRankingsBinding
 import dev.nicoloakacat.numberninja.getFlagUri
+import dev.nicoloakacat.numberninja.showResultMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -71,14 +73,22 @@ class RankingsFragment : Fragment() {
         val recyclerView = binding.rankingsRv
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        //TODO errori
         lifecycleScope.launch {
-            val users = UserStorage.findAll()
-            viewModel.setUsers(users)
+            try {
+                val users = UserStorage.findAll()
+                viewModel.setUsers(users)
+            }catch (e: Exception){
+                viewModel.setShowError(true)
+                Log.e("RANKINGS_FRAGMENT", "An error occurred when retrieving data from DB")
+            }
         }
         viewModel.users.observe(viewLifecycleOwner){
             val rankingAdapter = RankingAdapter(requireContext(), viewModel.users.value!!)
             recyclerView.adapter = rankingAdapter
+        }
+        viewModel.showError.observe(viewLifecycleOwner) {
+            if(it)
+                showResultMessage(binding.rankingsErrorMessage, requireContext())
         }
     }
 

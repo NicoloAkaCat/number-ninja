@@ -21,12 +21,13 @@ object UserStorage {
 
     private const val COLLECTION_NAME: String = "users"
 
-    fun createDocument(userData: UserData, uid: String) {
+    suspend fun createDocument(userData: UserData, uid: String) {
         try {
             firestore()
                 .collection(COLLECTION_NAME)
                 .document(uid)
                 .set(userData)
+                .await()
         }
         catch (e: Exception) {
             Log.e("CREATE_DOCUMENT", e.message ?: "An Error Occurred")
@@ -43,8 +44,8 @@ object UserStorage {
                 .addOnSuccessListener {
                     Log.d("UPDATE_BETTER_PLAYERS", "SUCCESS: $count")
                 }
-                .addOnFailureListener {
-                    Log.d("UPDATE_BETTER_PLAYERS", "ERROR")
+                .addOnFailureListener { e ->
+                    Log.d("UPDATE_BETTER_PLAYERS", "ERROR: ${e.message}")
                 }
         }.start()
     }
@@ -58,23 +59,22 @@ object UserStorage {
                 .addOnSuccessListener {
                     Log.e("UPDATE_SCORE", "SUCCESS: $newScore")
                 }
-                .addOnFailureListener {
-                    Log.e("UPDATE_SCORE", "ERROR")
+                .addOnFailureListener { e ->
+                    Log.e("UPDATE_SCORE", "ERROR: ${e.message}")
                 }
         }.start()
     }
 
-    fun updateData(newName: String, newNationality: String, uid: String) {
-        runBlocking {
-            try{
-                firestore()
-                    .collection(COLLECTION_NAME)
-                    .document(uid)
-                    .update("name", newName, "nationality", newNationality.replace(" ", "_"))
-            }catch (e: Exception){
-                Log.e("UPDATE_DATA", e.message ?: "An Error Occurred")
-                throw e
-            }
+    suspend fun updateData(newName: String, newNationality: String, uid: String) {
+        try{
+            firestore()
+                .collection(COLLECTION_NAME)
+                .document(uid)
+                .update("name", newName, "nationality", newNationality.replace(" ", "_"))
+                .await()
+        }catch (e: Exception){
+            Log.e("UPDATE_DATA", e.message ?: "An Error Occurred")
+            throw e
         }
     }
 
@@ -121,10 +121,15 @@ object UserStorage {
     }
 
     suspend fun countBetterPlayersThan(maxScore: Int): Long {
-        val doc = firestore()
-            .collection(COLLECTION_NAME)
-            .whereGreaterThan("maxScore", maxScore)
+        try {
+            val doc = firestore()
+                .collection(COLLECTION_NAME)
+                .whereGreaterThan("maxScore", maxScore)
 
-        return doc.count().get(AggregateSource.SERVER).await().count
+            return doc.count().get(AggregateSource.SERVER).await().count
+        }catch (e: Exception){
+            Log.e("COUNT_BETTER_PLAYERS_THAN", e.message ?: "An Error Occurred")
+            throw e
+        }
     }
 }

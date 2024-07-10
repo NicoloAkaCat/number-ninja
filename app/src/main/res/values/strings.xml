@@ -27,4 +27,7 @@
     <!-- Worker Notification strings -->
     <string name="worker_notification_title">Someone has beaten your record :(</string>
     <string name="worker_notification_body">Oh no! Someone beat your record while you were offline…</string>
+
+    <!-- Generic strings -->
+    <string name="error_msg">An error occurred</string>
 </resources>

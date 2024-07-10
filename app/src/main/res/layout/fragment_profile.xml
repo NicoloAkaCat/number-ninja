@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="profile_card_data, profile_update_button, profile_logout_button, profile_update_progress" />
+        app:constraint_referenced_ids="profile_card_data, profile_update_button, profile_logout_button" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/profile_card_data"
@@ -163,6 +163,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.65"/>
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/profile_error_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/error_msg"
+        style="@style/chipErrorStyle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.75"
+        android:visibility="gone"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/profile_logout_button"

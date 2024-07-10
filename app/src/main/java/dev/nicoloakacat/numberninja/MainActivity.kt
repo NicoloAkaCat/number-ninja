@@ -14,7 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.work.Data
-import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
@@ -23,7 +23,6 @@ import dev.nicoloakacat.numberninja.databinding.ActivityMainBinding
 import dev.nicoloakacat.numberninja.db.UserStorage
 import dev.nicoloakacat.numberninja.background.RankTrackerWorker
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -64,11 +63,14 @@ class MainActivity : AppCompatActivity() {
             userViewModel.setUser(user)
 
             val uid: String = userViewModel.uid.value!!
-            //TODO try catch errori
-            val userDb = UserStorage.findOne(uid)
-            if(userDb != null){
-                userViewModel.setDataFromDB(userDb)
-                startBackgroundWork()
+            try{
+                val userDb = UserStorage.findOne(uid)
+                if(userDb != null){
+                    userViewModel.setDataFromDB(userDb)
+                    startBackgroundWork()
+                }
+            }catch (e: Exception){
+                Log.e("MAIN_ACTIVITY", "An error occurred when setting user data: ${e.message}")
             }
         }
     }
@@ -79,7 +81,7 @@ class MainActivity : AppCompatActivity() {
             .putInt("maxScore", userViewModel.maxScore.value!!)
             .putLong("nBetterPlayers", userViewModel.nBetterPlayers.value!!)
 
-        val rankTrackerRequest: WorkRequest = PeriodicWorkRequestBuilder<RankTrackerWorker>(1, TimeUnit.HOURS)
+        val rankTrackerRequest: WorkRequest = OneTimeWorkRequestBuilder<RankTrackerWorker>()
             .setInputData(inputData.build())
             .build()
 
@@ -96,11 +98,11 @@ class MainActivity : AppCompatActivity() {
                             // if value is different from the fallback value of Max Long
                             if(newBetterPlayersCount != Long.MAX_VALUE) {
                                 userViewModel.setBetterPlayersCount(newBetterPlayersCount)
-                                Log.d("RANK_WORKER", "New count: ${userViewModel.nBetterPlayers.value}")
+                                Log.d("RANK_WORKER", "New count: $newBetterPlayersCount")
                             }
                         }
                         else -> {
-                            Log.d("RANK_WORKER", "An Error occured in Ranking Worker")
+                            Log.e("RANK_WORKER", "An Error occurred in Ranking Worker")
                         }
                     }
                 }

@@ -2,6 +2,7 @@ package dev.nicoloakacat.numberninja.ui.play
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -95,15 +96,16 @@ class PlayFragment : Fragment() {
 
     private suspend fun updateMaxScore() {
         if(userViewModel.isUserLogged.value!! && playerHasNewMaxScore) {
-            lifecycleScope.launch {
+            try{
                 UserStorage.updateScore(userViewModel.maxScore.value!!, userViewModel.uid.value!!)
                 val count = UserStorage.countBetterPlayersThan(userViewModel.maxScore.value!!)
 
                 if(count != userViewModel.nBetterPlayers.value) {
                     UserStorage.updateBetterPlayersCount(count, userViewModel.uid.value!!)
                 }
+            }catch (e: Exception){
+                Log.e("UPDATE_MAX_SCORE", "An error occurred when updating max score")
             }
-
         }
     }
 

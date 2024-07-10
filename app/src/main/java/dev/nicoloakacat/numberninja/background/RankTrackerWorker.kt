@@ -15,33 +15,40 @@ class RankTrackerWorker(appContext: Context, workerParams: WorkerParameters) : C
         val uid = inputData.getString("uid")
         val maxScore = inputData.getInt("maxScore", 0)
 
-        val newBetterPlayersCount = UserStorage.countBetterPlayersThan(maxScore)
+        try{
+            val newBetterPlayersCount = UserStorage.countBetterPlayersThan(maxScore)
 
-        if(newBetterPlayersCount > currentBetterPlayersCount) {
-            Log.d("WORKER", "Someone beat your high score :(")
-            UserStorage.updateBetterPlayersCount(newBetterPlayersCount, uid!!)
+            //TODO rimuovere
+            Log.e("WORKER", "currentBetter: $currentBetterPlayersCount, newBetter: $newBetterPlayersCount")
 
-            val notification = Notification(
-                title = applicationContext.getString(R.string.worker_notification_title),
-                body = applicationContext.getString(R.string.worker_notification_body),
-                channel = "default_channel",
-                context = applicationContext,
-                autoCancel = true
-            )
-            NotificationHandler.sendNotification(notification)
+            if(newBetterPlayersCount > currentBetterPlayersCount) {
+                Log.d("WORKER", "Someone beat your high score :(")
+                UserStorage.updateBetterPlayersCount(newBetterPlayersCount, uid!!)
 
-            return Result.success(
-                Data.Builder()
-                    .putLong("nBetterPlayers", newBetterPlayersCount)
-                    .build()
-            )
-        }
-        else if(newBetterPlayersCount < currentBetterPlayersCount) {
-            Log.d("WORKER", "You beat someone score!")
-            UserStorage.updateBetterPlayersCount(newBetterPlayersCount, uid!!)
-        }
-        else {
-            Log.d("WORKER", "No updates")
+                val notification = Notification(
+                    title = applicationContext.getString(R.string.worker_notification_title),
+                    body = applicationContext.getString(R.string.worker_notification_body),
+                    channel = "default_channel",
+                    context = applicationContext,
+                    autoCancel = true
+                )
+                NotificationHandler.sendNotification(notification)
+
+                return Result.success(
+                    Data.Builder()
+                        .putLong("nBetterPlayers", newBetterPlayersCount)
+                        .build()
+                )
+            }
+            else if(newBetterPlayersCount < currentBetterPlayersCount) {
+                Log.d("WORKER", "You beat someone score!")
+                UserStorage.updateBetterPlayersCount(newBetterPlayersCount, uid!!)
+            }
+            else {
+                Log.d("WORKER", "No updates")
+            }
+        }catch (e: Exception){
+            return Result.failure()
         }
 
         return Result.success()

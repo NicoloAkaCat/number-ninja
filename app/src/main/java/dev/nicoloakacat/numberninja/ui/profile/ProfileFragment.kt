@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dev.nicoloakacat.numberninja.databinding.FragmentProfileBinding
 import androidx.navigation.fragment.findNavController
@@ -27,12 +28,14 @@ import dev.nicoloakacat.numberninja.UserViewModel
 import dev.nicoloakacat.numberninja.getFlagUri
 import dev.nicoloakacat.numberninja.hide
 import dev.nicoloakacat.numberninja.show
+import dev.nicoloakacat.numberninja.showResultMessage
 import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
     private val userViewModel: UserViewModel by activityViewModels()
+    private val viewModel: ProfileViewModel by viewModels()
     private val nations = Nationality.entries.map { n -> n.toString().replace("_", " ") }
     private val providers = arrayListOf(
         AuthUI.IdpConfig.EmailBuilder().build(),
@@ -93,6 +96,11 @@ class ProfileFragment : Fragment() {
         binding.profileUpdateButton.setOnClickListener {
             updateProfile()
         }
+
+        viewModel.showError.observe(viewLifecycleOwner){
+            if(it)
+                showResultMessage(binding.profileErrorMessage, requireContext())
+        }
     }
 
     private val signInLauncher = registerForActivityResult(
@@ -107,41 +115,44 @@ class ProfileFragment : Fragment() {
             RESULT_OK -> {
                 val user = FirebaseAuth.getInstance().currentUser
                 userViewModel.setUser(user)
+                try {
+                    val uid: String = userViewModel.uid.value!!
+                    val userDataFromDB = UserStorage.findOne(uid)
 
-                val uid: String = userViewModel.uid.value!!
-                //TODO try catch errori
-                val userDataFromDB = UserStorage.findOne(uid)
+                    // sync data with the DB
+                    val localMaxScore = userViewModel.maxScore.value!!
+                    if (userDataFromDB != null) {
+                        // syncing max score
+                        if (localMaxScore > userDataFromDB.maxScore!!) {
+                            userDataFromDB.maxScore = localMaxScore
+                            UserStorage.updateScore(localMaxScore, uid)
+                        }
 
-                // sync data with the DB
-                val localMaxScore = userViewModel.maxScore.value!!
-                val nBetterPlayers = UserStorage.countBetterPlayersThan(localMaxScore)
+                        // syncing number of players better than us
+                        val nBetterPlayers = UserStorage.countBetterPlayersThan(userDataFromDB.maxScore!!)
+                        if (nBetterPlayers != userDataFromDB.nBetterPlayers) {
+                            userDataFromDB.nBetterPlayers = nBetterPlayers
+                            UserStorage.updateBetterPlayersCount(nBetterPlayers, uid)
+                        }
 
-                if (userDataFromDB != null) {
-                    if(localMaxScore > userDataFromDB.maxScore!!) {
-                        userDataFromDB.maxScore = userViewModel.maxScore.value
-                        UserStorage.updateScore(localMaxScore, uid)
+                        userViewModel.setDataFromDB(userDataFromDB)
+                    } else {
+                        val userToInsert = UserData(
+                            maxScore = localMaxScore,
+                            nationality = "Unknown",
+                            name = userViewModel.displayName.value!!,
+                            nBetterPlayers = UserStorage.countBetterPlayersThan(localMaxScore)
+                        )
+                        UserStorage.createDocument(userToInsert, uid)
                     }
-
-                    if(nBetterPlayers != userDataFromDB.nBetterPlayers) {
-                        userDataFromDB.nBetterPlayers = nBetterPlayers
-                        UserStorage.updateBetterPlayersCount(nBetterPlayers, uid)
+                }catch (e: Exception){
+                    viewModel.setShowError(true)
+                    Log.e("ON_SIGN_IN_RESULT", "An error occurred, ${e.message}")
+                }finally {
+                    navController.run {
+                        popBackStack()
+                        navigate(R.id.navigation_profile)
                     }
-
-                    userViewModel.setDataFromDB(userDataFromDB)
-                }
-                else {
-                    val userToInsert = UserData(
-                        maxScore = localMaxScore,
-                        nationality = "Unknown",
-                        name = userViewModel.displayName.value!!,
-                        nBetterPlayers = nBetterPlayers
-                    )
-                    UserStorage.createDocument(userToInsert, uid)
-                }
-
-                navController.run {
-                    popBackStack()
-                    navigate(R.id.navigation_profile)
                 }
             }
 
@@ -157,8 +168,9 @@ class ProfileFragment : Fragment() {
                     userViewModel.setUser(null)
                     findNavController().popBackStack(R.id.navigation_profile, false)
                 }
-                .addOnFailureListener{
-                    //TODO errori
+                .addOnFailureListener{ e ->
+                    Log.e("LOGOUT", "An error occurred, ${e.message}")
+                    viewModel.setShowError(true)
                 }
         }
     }
@@ -172,19 +184,22 @@ class ProfileFragment : Fragment() {
         userViewModel.setDisplayName(newName)
         userViewModel.setNationality(newNationality)
 
-        try {
-            // update firebase Auth user
-            FirebaseAuth.getInstance().currentUser?.updateProfile(
-                UserProfileChangeRequest.Builder()
-                    .setDisplayName(newName)
-                    .build()
-            )
-            // update DB data
-            UserStorage.updateData(newName, newNationality, userViewModel.uid.value!!)
-        }catch (e: Exception){
-            //TODO errori
-        }finally {
-            binding.profileUpdateProgress.visibility = View.INVISIBLE
+        lifecycleScope.launch {
+            try {
+                // update firebase Auth user
+                FirebaseAuth.getInstance().currentUser?.updateProfile(
+                    UserProfileChangeRequest.Builder()
+                        .setDisplayName(newName)
+                        .build()
+                )
+                // update DB data
+                UserStorage.updateData(newName, newNationality, userViewModel.uid.value!!)
+            } catch (e: Exception) {
+                viewModel.setShowError(true)
+                Log.e("UPDATE", "An error occurred, ${e.message}")
+            } finally {
+                binding.profileUpdateProgress.visibility = View.INVISIBLE
+            }
         }
     }
 
