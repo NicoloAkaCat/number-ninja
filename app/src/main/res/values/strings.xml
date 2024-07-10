@@ -23,4 +23,8 @@
 
     <!-- Rankings strings -->
     <string name="rankings_flag_description">Player\'s flag</string>
+
+    <!-- Worker Notification strings -->
+    <string name="worker_notification_title">Someone has beaten your record :(</string>
+    <string name="worker_notification_body">Oh no! Someone beat your record while you were offline…</string>
 </resources>

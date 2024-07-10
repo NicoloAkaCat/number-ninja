@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NumberNinja"
         tools:targetApi="31">
-        <service android:name=".FirebaseNotification"
+        <service android:name=".background.FirebaseNotification"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

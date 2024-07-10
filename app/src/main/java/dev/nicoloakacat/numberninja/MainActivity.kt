@@ -21,6 +21,7 @@ import androidx.work.WorkRequest
 import com.google.firebase.auth.FirebaseAuth
 import dev.nicoloakacat.numberninja.databinding.ActivityMainBinding
 import dev.nicoloakacat.numberninja.db.UserStorage
+import dev.nicoloakacat.numberninja.background.RankTrackerWorker
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
