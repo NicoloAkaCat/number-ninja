@@ -32,8 +32,8 @@ class RankTrackerWorker(appContext: Context, workerParams: WorkerParameters) : C
 
             return Result.success(
                 Data.Builder()
-                .putLong("nBetterPlayers", newBetterPlayersCount)
-                .build()
+                    .putLong("nBetterPlayers", newBetterPlayersCount)
+                    .build()
             )
         }
         else if(newBetterPlayersCount < currentBetterPlayersCount) {

@@ -41,10 +41,10 @@ object UserStorage {
                 .document(uid)
                 .update("nBetterPlayers", count)
                 .addOnSuccessListener {
-                    Log.e("UPDATE_BETTER_PLAYERS", "SUCCESS: $count")
+                    Log.d("UPDATE_BETTER_PLAYERS", "SUCCESS: $count")
                 }
                 .addOnFailureListener {
-                    Log.e("UPDATE_BETTER_PLAYERS", "ERROR")
+                    Log.d("UPDATE_BETTER_PLAYERS", "ERROR")
                 }
         }.start()
     }

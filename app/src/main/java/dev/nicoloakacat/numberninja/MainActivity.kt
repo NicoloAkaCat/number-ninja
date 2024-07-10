@@ -14,7 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
@@ -23,6 +23,7 @@ import dev.nicoloakacat.numberninja.databinding.ActivityMainBinding
 import dev.nicoloakacat.numberninja.db.UserStorage
 import dev.nicoloakacat.numberninja.background.RankTrackerWorker
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
             .putInt("maxScore", userViewModel.maxScore.value!!)
             .putLong("nBetterPlayers", userViewModel.nBetterPlayers.value!!)
 
-        val rankTrackerRequest: WorkRequest = OneTimeWorkRequestBuilder<RankTrackerWorker>()
+        val rankTrackerRequest: WorkRequest = PeriodicWorkRequestBuilder<RankTrackerWorker>(1, TimeUnit.HOURS)
             .setInputData(inputData.build())
             .build()
 

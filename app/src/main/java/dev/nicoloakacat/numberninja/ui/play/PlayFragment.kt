@@ -5,20 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.firebase.ui.auth.data.model.User
-import com.google.android.material.chip.Chip
-import dev.nicoloakacat.numberninja.R
 import dev.nicoloakacat.numberninja.db.UserStorage
 import dev.nicoloakacat.numberninja.UserViewModel
 import dev.nicoloakacat.numberninja.databinding.FragmentPlayBinding
 import dev.nicoloakacat.numberninja.hide
 import dev.nicoloakacat.numberninja.show
+import dev.nicoloakacat.numberninja.showResultMessage
 import kotlinx.coroutines.launch
 
 
@@ -68,7 +65,7 @@ class PlayFragment : Fragment() {
             imm.hideSoftInputFromWindow(view.windowToken, 0)
             // check guess
             if(viewModel.number.value == guess){
-                showResultMessage(binding.playResultMessageSuccess)
+                showResultMessage(binding.playResultMessageSuccess, requireContext())
                 if(currentDigit > userViewModel.maxScore.value!!) {
                     userViewModel.setMaxScore(currentDigit)
                     playerHasNewMaxScore = true
@@ -79,7 +76,7 @@ class PlayFragment : Fragment() {
                 show(binding.showNumberGroup)
                 viewModel.startCountdown()
             }else{
-                showResultMessage(binding.playResultMessageError)
+                showResultMessage(binding.playResultMessageError, requireContext())
                 lifecycleScope.launch { updateMaxScore() }
                 currentDigit = 1
                 hide(binding.guessNumberGroup)
@@ -119,15 +116,6 @@ class PlayFragment : Fragment() {
                 (0..9).random().toString()
         }
         return n
-    }
-
-    private fun showResultMessage(resMsg: Chip) {
-        resMsg.visibility = View.VISIBLE
-        resMsg.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
-        resMsg.postDelayed({
-            resMsg.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_out))
-            resMsg.visibility = View.INVISIBLE
-        },3000)
     }
 
 }
